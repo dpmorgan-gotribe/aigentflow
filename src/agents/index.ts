@@ -21,6 +21,7 @@ export { AnalystAgent, createAnalystAgent } from './analyst.js';
 
 // Phase 2 agents (v1.0)
 export { ProjectAnalyzerAgent, createProjectAnalyzerAgent } from './project-analyzer.js';
+export { ComplianceAgent, createComplianceAgent, type ComplianceAgentOutput } from './compliance-agent.js';
 
 // Types
 export type {
