@@ -69,3 +69,43 @@ export {
   getFileLockManager,
   resetFileLockManager,
 } from './file-lock-manager.js';
+
+// Conflict Detector
+export {
+  ConflictDetector,
+  getConflictDetector,
+  resetConflictDetector,
+  type ConflictSeverity,
+  type ExtendedConflictInfo,
+  type FileChange as ConflictFileChange,
+  type BranchChanges,
+  type ConflictDetectionResult,
+  type CrossFeatureAnalysis,
+  type ConflictDetectorConfig,
+} from './conflict-detector.js';
+
+// Conflict Resolver
+export {
+  ConflictResolver,
+  getConflictResolver,
+  resetConflictResolver,
+  type ResolutionStrategy,
+  type ResolutionAction,
+  type ResolutionResult,
+  type BatchResolutionResult,
+  type ResolutionSuggestion,
+  type ManualResolutionInput,
+  type ConflictResolverConfig,
+} from './conflict-resolver.js';
+
+// Merge Manager
+export {
+  MergeManager,
+  getMergeManager,
+  resetMergeManager,
+  type MergeStatus,
+  type MergeSession,
+  type MergePlan,
+  type MergeQueueEntry,
+  type MergeManagerConfig,
+} from './merge-manager.js';
