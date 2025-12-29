@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aigentflow User Guide</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header .tagline {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        header .version {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border: 1px solid var(--border);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            transition: background 0.2s;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+        }
+
+        /* Sections */
+        section {
+            background: var(--bg-card);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        section h2 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        section h3 {
+            color: var(--secondary);
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        section h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Code blocks */
+        pre {
+            background: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+        }
+
+        :not(pre) > code {
+            background: #0d1117;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .card h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.25rem;
+        }
+
+        .badge-primary { background: var(--primary); }
+        .badge-success { background: var(--secondary); }
+        .badge-warning { background: var(--warning); color: #000; }
+        .badge-danger { background: var(--danger); }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--secondary);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Flow diagram */
+        .flow-diagram {
+            background: #0d1117;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            white-space: pre;
+            margin: 1rem 0;
+        }
+
+        /* Agent icons */
+        .agent-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Progress steps */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin: 0 0 0.25rem;
+        }
+
+        .step-content p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Checkpoints */
+        .checkpoint {
+            border-left: 3px solid var(--primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+        }
+
+        .checkpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkpoint-number {
+            background: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Aigentflow</h1>
+        <p class="tagline">CLI-First Multi-Agent Orchestrator for Full-Stack Development</p>
+        <span class="version">Version 2.1.0</span>
+    </header>
+
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#cli-commands">CLI Commands</a></li>
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#workflow">Workflow</a></li>
+                <li><a href="#git-worktrees">Git Worktrees</a></li>
+                <li><a href="#compliance">Compliance</a></li>
+                <li><a href="#self-evolution">Self-Evolution</a></li>
+                <li><a href="#enterprise">Enterprise</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </nav>
+
+        <!-- Overview Section -->
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Aigentflow is a powerful multi-agent orchestration system designed to automate full-stack software development. It coordinates 14 specialized AI agents to handle everything from requirements analysis to code review and deployment.</p>
+
+            <h3>Key Features</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>14 Specialized Agents</h4>
+                    <p>From architects to testers, each agent handles specific development tasks with expertise.</p>
+                </div>
+                <div class="card">
+                    <h4>Git Worktree Isolation</h4>
+                    <p>Parallel feature development with automatic conflict detection and resolution.</p>
+                </div>
+                <div class="card">
+                    <h4>Self-Evolution</h4>
+                    <p>Automatically detects patterns and generates new agents using DSPy and TrueSkill.</p>
+                </div>
+                <div class="card">
+                    <h4>Enterprise Compliance</h4>
+                    <p>Built-in support for GDPR, SOC2, HIPAA, and PCI-DSS compliance frameworks.</p>
+                </div>
+            </div>
+
+            <h3>Technology Stack</h3>
+            <table>
+                <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
+                <tr><td>CLI</td><td>Commander.js</td><td>Command-line interface</td></tr>
+                <tr><td>Runtime</td><td>Node.js 20+</td><td>JavaScript runtime</td></tr>
+                <tr><td>Language</td><td>TypeScript 5.x</td><td>Type-safe development</td></tr>
+                <tr><td>Database</td><td>SQLite (better-sqlite3)</td><td>State persistence</td></tr>
+                <tr><td>LLM (Dev)</td><td>Claude CLI</td><td>AI agents via Claude Code CLI</td></tr>
+                <tr><td>LLM (Prod)</td><td>Anthropic API</td><td>Direct API for production</td></tr>
+                <tr><td>Git</td><td>simple-git</td><td>Version control operations</td></tr>
+                <tr><td>Testing</td><td>Vitest</td><td>Test runner</td></tr>
+                <tr><td>Validation</td><td>Zod</td><td>Schema validation</td></tr>
+            </table>
+
+            <h3>Execution Modes</h3>
+            <div class="alert alert-info">
+                <strong>Dual-Mode Architecture:</strong> Aigentflow supports two execution modes for AI agents - Claude CLI for development and Anthropic API for production.
+            </div>
+            <table>
+                <tr><th>Mode</th><th>When to Use</th><th>How It Works</th></tr>
+                <tr>
+                    <td><span class="badge badge-success">Development</span></td>
+                    <td>Local development, testing, iteration</td>
+                    <td>Spawns Claude CLI subprocesses using <code>claude</code> command</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-primary">Production</span></td>
+                    <td>Deployed environments, CI/CD, cloud</td>
+                    <td>Direct Anthropic API calls with API key authentication</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Getting Started Section -->
+        <section id="getting-started">
+            <h2>Getting Started</h2>
+
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Node.js 20 or higher</li>
+                <li>npm or yarn package manager</li>
+                <li>Git installed and configured</li>
+                <li><strong>For Development:</strong> Claude CLI installed (<code>npm install -g @anthropic-ai/claude-code</code>)</li>
+                <li><strong>For Production:</strong> Anthropic API key</li>
+            </ul>
+
+            <h3>Installation</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Install Claude CLI (Development)</h4>
+                        <pre><code># Install Claude CLI globally
+npm install -g @anthropic-ai/claude-code
+
+# Verify installation
+claude --version</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Install Aigentflow</h4>
+                        <pre><code>npm install -g aigentflow</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Configure Execution Mode</h4>
+                        <pre><code># For development (uses Claude CLI - no API key needed)
+aigentflow config executionMode development --global
+
+# For production (uses Anthropic API)
+aigentflow config executionMode production --global
+aigentflow config anthropicApiKey YOUR_API_KEY --global</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Initialize a Project</h4>
+                        <pre><code>aigentflow init my-project</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Run Your First Task</h4>
+                        <pre><code>cd projects/my-project
+aigentflow run "Build a login page with email and password"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Project Templates</h3>
+            <p>When initializing, you can choose from several templates:</p>
+            <table>
+                <tr><th>Template</th><th>Description</th></tr>
+                <tr><td><code>react</code></td><td>React + TypeScript frontend application</td></tr>
+                <tr><td><code>vue</code></td><td>Vue 3 + TypeScript frontend application</td></tr>
+                <tr><td><code>express</code></td><td>Express + TypeScript backend API</td></tr>
+                <tr><td><code>fastapi</code></td><td>FastAPI + Python backend API</td></tr>
+                <tr><td><code>fullstack</code></td><td>React frontend + FastAPI backend</td></tr>
+                <tr><td><code>empty</code></td><td>No template - start from scratch</td></tr>
+            </table>
+
+            <pre><code>aigentflow init my-app --template fullstack</code></pre>
+        </section>
+
+        <!-- CLI Commands Section -->
+        <section id="cli-commands">
+            <h2>CLI Commands</h2>
+
+            <h3>Global Options</h3>
+            <pre><code>aigentflow [command] [options]
+
+Options:
+  -v, --version     Show version number
+  -h, --help        Show help information
+  --debug           Enable debug output
+  --no-color        Disable colored output</code></pre>
+
+            <h3>Core Commands</h3>
+
+            <h4>init - Initialize a New Project</h4>
+            <pre><code>aigentflow init &lt;name&gt; [options]
+
+Options:
+  -t, --template &lt;template&gt;    Project template (react, vue, fastapi, express)
+  -i, --import &lt;path&gt;          Import existing codebase
+  -c, --compliance &lt;frameworks...&gt;  Compliance frameworks (gdpr, soc2, hipaa)
+  -y, --yes                    Skip prompts, use defaults
+
+Examples:
+  aigentflow init my-app
+  aigentflow init my-app --template react --compliance gdpr soc2
+  aigentflow init my-app --import ./existing-project</code></pre>
+
+            <h4>run - Execute a Task</h4>
+            <pre><code>aigentflow run &lt;prompt&gt; [options]
+
+Options:
+  -s, --stop-at &lt;stage&gt;   Stop at stage (plan, design, build, test, review)
+  -a, --agent &lt;agent&gt;     Route directly to specific agent
+  --dry-run               Show what would be done without executing
+  --auto-approve          Auto-approve all checkpoints
+  --auto-merge            Auto-merge on completion
+
+Examples:
+  aigentflow run "Add user authentication"
+  aigentflow run "Fix the login bug" --stop-at test
+  aigentflow run "Create dashboard" --dry-run</code></pre>
+
+            <h4>status - Show Project Status</h4>
+            <pre><code>aigentflow status [options]
+
+Options:
+  -w, --worktrees    Show worktree status
+  -a, --agents       Show agent status
+  --json             Output as JSON
+
+Examples:
+  aigentflow status
+  aigentflow status --worktrees --agents
+  aigentflow status --json</code></pre>
+
+            <h4>approve - Approve Pending Checkpoints</h4>
+            <pre><code>aigentflow approve [options]
+
+Options:
+  -a, --all                     Approve all pending checkpoints
+  --with-comments &lt;comments&gt;   Add comments to approval
+
+Examples:
+  aigentflow approve
+  aigentflow approve --all
+  aigentflow approve --with-comments "Looks good"</code></pre>
+
+            <h4>abort - Cancel Current Operation</h4>
+            <pre><code>aigentflow abort [options]
+
+Options:
+  -f, --force      Force abort without confirmation
+  --rollback       Rollback to last checkpoint
+
+Examples:
+  aigentflow abort
+  aigentflow abort --force --rollback</code></pre>
+
+            <h4>config - Manage Configuration</h4>
+            <pre><code>aigentflow config [key] [value] [options]
+
+Options:
+  -g, --global     Use global configuration
+  -e, --edit       Open in editor
+  --reset          Reset to defaults
+
+Examples:
+  aigentflow config                          # Show all config
+  aigentflow config anthropic.model          # Get specific key
+  aigentflow config debug true --global      # Set global value
+  aigentflow config --reset                  # Reset config</code></pre>
+
+            <h4>history - View Execution History</h4>
+            <pre><code>aigentflow history [options]
+
+Options:
+  -l, --limit &lt;count&gt;    Limit results (default: 10)
+  -a, --agent &lt;agent&gt;    Filter by agent
+  --json                 Output as JSON
+
+Examples:
+  aigentflow history
+  aigentflow history --agent frontend_dev --limit 20</code></pre>
+
+            <h4>lessons - View Learned Lessons</h4>
+            <pre><code>aigentflow lessons [options]
+
+Options:
+  -s, --search &lt;query&gt;       Search lessons
+  -c, --category &lt;category&gt;  Filter by category
+  -l, --limit &lt;count&gt;        Limit results
+
+Examples:
+  aigentflow lessons
+  aigentflow lessons --search "authentication"
+  aigentflow lessons --category security</code></pre>
+
+            <h3>Agent Commands</h3>
+            <pre><code>aigentflow agents list                 # List all registered agents
+aigentflow agents status               # Show agent health status
+aigentflow test-agent &lt;agent&gt; --input  # Test specific agent</code></pre>
+
+            <h3>Git Commands</h3>
+            <pre><code>aigentflow git worktree create &lt;name&gt;  # Create feature worktree
+aigentflow git worktree list           # List all worktrees
+aigentflow git worktree remove &lt;name&gt;  # Remove worktree</code></pre>
+
+            <h3>Evolution Commands</h3>
+            <pre><code>aigentflow evolution seed-traces --count 50   # Generate trace data
+aigentflow evolution detect-patterns          # Run pattern detection
+aigentflow evolution list-patterns            # List detected patterns
+aigentflow evolution generate-agent --pattern-id 1  # Generate new agent
+aigentflow evolution tournament --matches 15  # Run tournament
+aigentflow evolution ratings                  # Show TrueSkill ratings</code></pre>
+        </section>
+
+        <!-- Agents Section -->
+        <section id="agents">
+            <h2>Agent System</h2>
+            <p>Aigentflow uses 14 specialized agents, each designed for specific tasks in the development workflow.</p>
+
+            <h3>Agent Registry</h3>
+            <table>
+                <tr><th>Agent</th><th>Type</th><th>Primary Role</th></tr>
+                <tr>
+                    <td><span class="agent-icon">&#127919;</span>Orchestrator</td>
+                    <td><span class="badge badge-primary">Core</span></td>
+                    <td>Central coordinator, decision engine, routing</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128203;</span>Project Manager</td>
+                    <td><span class="badge badge-primary">Core</span></td>
+                    <td>Work breakdown, dependencies, scheduling</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#127959;</span>Architect</td>
+                    <td><span class="badge badge-primary">Core</span></td>
+                    <td>Tech decisions, ADRs, architecture design</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128269;</span>Analyst</td>
+                    <td><span class="badge badge-success">Research</span></td>
+                    <td>Research, best practices, comparisons</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128396;</span>UI Designer</td>
+                    <td><span class="badge badge-success">Design</span></td>
+                    <td>Mockups, wireframes, visual design</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128187;</span>Git Agent</td>
+                    <td><span class="badge badge-warning">Git</span></td>
+                    <td>Branches, worktrees, version control</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#9883;</span>Frontend Dev</td>
+                    <td><span class="badge badge-success">Build</span></td>
+                    <td>UI components, React/Vue development</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#9881;</span>Backend Dev</td>
+                    <td><span class="badge badge-success">Build</span></td>
+                    <td>APIs, services, database logic</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#129514;</span>Tester</td>
+                    <td><span class="badge badge-warning">QA</span></td>
+                    <td>Test execution, coverage reports</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128295;</span>Bug Fixer</td>
+                    <td><span class="badge badge-warning">QA</span></td>
+                    <td>Fix loops, issue resolution</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128472;</span>Merge Resolver</td>
+                    <td><span class="badge badge-warning">Git</span></td>
+                    <td>Conflict resolution, merges</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128065;</span>Reviewer</td>
+                    <td><span class="badge badge-danger">Review</span></td>
+                    <td>Code review, quality checks, lessons</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128218;</span>Project Analyzer</td>
+                    <td><span class="badge badge-success">Analysis</span></td>
+                    <td>Codebase analysis, documentation</td>
+                </tr>
+                <tr>
+                    <td><span class="agent-icon">&#128274;</span>Compliance Agent</td>
+                    <td><span class="badge badge-danger">Security</span></td>
+                    <td>GDPR, SOC2, HIPAA, PCI-DSS compliance</td>
+                </tr>
+            </table>
+
+            <h3>Agent Execution Flow</h3>
+            <div class="flow-diagram">
+User Input
+    |
+    v
++------------------+
+|   Orchestrator   |  &lt;-- Central decision engine (85% rules, 15% AI)
++------------------+
+    |
+    +--&gt; Project Manager --&gt; Work breakdown
+    |
+    +--&gt; Architect --&gt; Technical decisions
+    |
+    +--&gt; UI Designer --&gt; Mockups &amp; flows
+    |
+    +--&gt; Frontend Dev --+
+    |                   |--&gt; Parallel development
+    +--&gt; Backend Dev ---+
+    |
+    +--&gt; Tester --&gt; Bug Fixer (loop up to 3x)
+    |
+    +--&gt; Reviewer --&gt; Lessons extraction
+    |
+    v
+Complete</div>
+
+            <h3>Agent Context Management</h3>
+            <p>Each agent receives curated context based on their requirements:</p>
+            <ul>
+                <li><strong>project_config</strong> - Project settings and configuration</li>
+                <li><strong>design_tokens</strong> - Design system variables and styles</li>
+                <li><strong>user_flows</strong> - User flow diagrams and specifications</li>
+                <li><strong>mockups</strong> - HTML/CSS mockups from UI Designer</li>
+                <li><strong>source_code</strong> - Relevant source files</li>
+                <li><strong>test_results</strong> - Test execution results</li>
+                <li><strong>lessons_learned</strong> - Historical lessons from reviews</li>
+            </ul>
+
+            <h3>Claude CLI vs API Execution</h3>
+            <div class="alert alert-info">
+                <strong>Development Mode:</strong> Agents spawn Claude CLI subprocesses, leveraging the full Claude Code toolset (file operations, bash, search, etc.)
+            </div>
+            <div class="alert alert-success">
+                <strong>Production Mode:</strong> Agents make direct Anthropic API calls for faster execution and lower latency in deployed environments.
+            </div>
+
+            <h4>Development Mode (Claude CLI)</h4>
+            <p>When running in development mode, each agent execution:</p>
+            <ul>
+                <li>Spawns a new <code>claude</code> CLI subprocess</li>
+                <li>Passes the agent's system prompt and task via <code>--print</code> or pipe</li>
+                <li>Leverages Claude Code's built-in tools (Read, Write, Edit, Bash, Glob, Grep)</li>
+                <li>Captures structured output via JSON parsing</li>
+                <li>Benefits from Claude CLI's context window management</li>
+            </ul>
+            <pre><code># How agents execute in development mode (internal)
+claude --print "You are the UI Designer agent..." | parse-output
+
+# Or using the SDK pattern
+import { spawn } from 'child_process';
+const claude = spawn('claude', ['--print', prompt]);</code></pre>
+
+            <h4>Production Mode (Anthropic API)</h4>
+            <p>When running in production mode, each agent execution:</p>
+            <ul>
+                <li>Makes direct HTTP calls to the Anthropic API</li>
+                <li>Uses the configured API key for authentication</li>
+                <li>Implements custom tool handlers for file operations</li>
+                <li>Provides lower latency for high-throughput scenarios</li>
+            </ul>
+            <pre><code># Production mode requires API key
+aigentflow config executionMode production --global
+aigentflow config anthropicApiKey sk-ant-... --global</code></pre>
+
+            <h4>Switching Modes</h4>
+            <pre><code># Check current mode
+aigentflow config executionMode
+
+# Switch to development (Claude CLI)
+aigentflow config executionMode development
+
+# Switch to production (Anthropic API)
+aigentflow config executionMode production
+
+# Override per-command
+aigentflow run "Build feature" --mode development
+aigentflow run "Build feature" --mode production</code></pre>
+        </section>
+
+        <!-- Workflow Section -->
+        <section id="workflow">
+            <h2>Development Workflow</h2>
+
+            <h3>Workflow Phases</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Analyzing</h4>
+                        <p>Orchestrator analyzes your prompt to classify the task type (feature, bugfix, refactor) and determine complexity.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Planning</h4>
+                        <p>Project Manager creates work breakdown structure with epics, features, and tasks. Dependencies are mapped.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Designing</h4>
+                        <p>Architect makes technical decisions. UI Designer generates mockups and user flows. <span class="badge badge-warning">Approval Gate</span></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Building</h4>
+                        <p>Frontend and Backend developers work in parallel within feature worktrees using TDD approach.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Testing</h4>
+                        <p>Tester runs test suite. Failures route to Bug Fixer (max 3 attempts before escalation).</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>Reviewing</h4>
+                        <p>Reviewer performs code review, extracts lessons learned, and stores them for future reference. <span class="badge badge-warning">Approval Gate</span></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h4>Complete</h4>
+                        <p>Changes merged to integration branch, CI/CD checks run, ready for release.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Approval Gates</h3>
+            <div class="alert alert-info">
+                <strong>Human-in-the-Loop:</strong> Aigentflow pauses at key checkpoints for your approval. This ensures quality and gives you control over what gets implemented.
+            </div>
+
+            <p>Approval gates occur at:</p>
+            <ul>
+                <li><strong>Design Phase</strong> - Review mockups, user flows, and design tokens before implementation</li>
+                <li><strong>Code Review</strong> - Review generated code, test coverage, and quality metrics</li>
+                <li><strong>Merge</strong> - Final approval before merging to main branch</li>
+            </ul>
+
+            <pre><code># Interactive approval
+aigentflow approve
+
+# Approve with comments
+aigentflow approve --with-comments "Approved with minor suggestions"
+
+# Auto-approve (use with caution)
+aigentflow run "Build feature" --auto-approve</code></pre>
+
+            <h3>Stopping at Specific Stages</h3>
+            <pre><code># Stop after planning
+aigentflow run "Build user dashboard" --stop-at plan
+
+# Stop after design (before building)
+aigentflow run "Build user dashboard" --stop-at design
+
+# Stop after building (before testing)
+aigentflow run "Build user dashboard" --stop-at build
+
+# Stop after testing (before review)
+aigentflow run "Build user dashboard" --stop-at test</code></pre>
+        </section>
+
+        <!-- Git Worktrees Section -->
+        <section id="git-worktrees">
+            <h2>Git Worktrees</h2>
+            <p>Aigentflow uses Git worktrees to enable parallel feature development with complete isolation.</p>
+
+            <h3>Feature-Based Worktree Model</h3>
+            <div class="flow-diagram">
+Main Repository
+└── main branch
+     |
+     ├── feature/user-auth (worktree 1)
+     |   |
+     |   |  DEVELOPMENT PHASE (parallel):
+     |   ├── Frontend Agent ──┬── Work in PARALLEL
+     |   └── Backend Agent  ──┘
+     |   |
+     |   |  TESTING PHASE:
+     |   ├── Tester Agent ── Creates e2e tests
+     |   |
+     |   |  FIX LOOP (if tests fail):
+     |   ├── Bug Fixer Agent ── Applies fixes
+     |   └── Tester Agent ── Re-runs tests
+     |
+     ├── feature/dashboard (worktree 2)
+     |   └── ... (same agent workflow)
+     |
+     └── feature/notifications (worktree 3)
+         └── ... (same agent workflow)</div>
+
+            <h3>Key Principles</h3>
+            <ul>
+                <li>Each <strong>feature</strong> gets its own worktree (not each developer type)</li>
+                <li>All code-modifying agents work within the <strong>same feature worktree</strong></li>
+                <li>Frontend and Backend agents work in <strong>parallel</strong> during development</li>
+                <li>Multiple features can be developed <strong>simultaneously</strong> across worktrees</li>
+                <li>Isolation is per-feature, enabling independent feature development</li>
+            </ul>
+
+            <h3>Worktree Commands</h3>
+            <pre><code># Create a feature worktree
+aigentflow git worktree create feature/user-auth
+
+# List all worktrees
+aigentflow git worktree list
+
+# Check worktree status
+aigentflow status --worktrees
+
+# Remove a worktree
+aigentflow git worktree remove feature/user-auth</code></pre>
+
+            <h3>Conflict Detection</h3>
+            <p>Aigentflow automatically detects potential conflicts across worktrees:</p>
+            <ul>
+                <li>Overlapping file changes detected across worktrees</li>
+                <li>Conflict warning before merge to integration</li>
+                <li>Resolution suggestions provided</li>
+                <li>Manual resolution workflow when needed</li>
+            </ul>
+        </section>
+
+        <!-- Compliance Section -->
+        <section id="compliance">
+            <h2>Compliance & Security</h2>
+
+            <h3>Supported Frameworks</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>GDPR</h4>
+                    <p>General Data Protection Regulation - Data privacy for EU citizens</p>
+                </div>
+                <div class="card">
+                    <h4>SOC 2</h4>
+                    <p>Service Organization Control - Security, availability, processing integrity</p>
+                </div>
+                <div class="card">
+                    <h4>HIPAA</h4>
+                    <p>Health Insurance Portability - Healthcare data protection</p>
+                </div>
+                <div class="card">
+                    <h4>PCI-DSS</h4>
+                    <p>Payment Card Industry - Payment data security standard</p>
+                </div>
+            </div>
+
+            <h3>Enabling Compliance</h3>
+            <pre><code># During project initialization
+aigentflow init my-healthcare-app --compliance hipaa gdpr
+
+# Add compliance to existing project
+aigentflow config compliance.frameworks '["gdpr", "soc2"]'</code></pre>
+
+            <h3>Two-Tier Compliance Model</h3>
+            <table>
+                <tr><th>Tier</th><th>Scope</th><th>Examples</th></tr>
+                <tr>
+                    <td><strong>Platform Compliance</strong></td>
+                    <td>Always active, cannot be disabled</td>
+                    <td>Secret detection, security scans, audit logging</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Compliance</strong></td>
+                    <td>Configurable per project</td>
+                    <td>GDPR data handling, HIPAA PHI rules, PCI encryption</td>
+                </tr>
+            </table>
+
+            <h3>Built-in Security Hooks</h3>
+            <ul>
+                <li><strong>secret-detection</strong> - Blocks commits containing API keys, passwords, tokens</li>
+                <li><strong>code-security-scan</strong> - Scans for vulnerabilities (OWASP Top 10)</li>
+                <li><strong>audit-log</strong> - Logs all operations to immutable audit trail</li>
+                <li><strong>license-compliance</strong> - Validates open source licenses</li>
+            </ul>
+
+            <pre><code># View active hooks
+aigentflow hooks list
+
+# Configure hook
+aigentflow hooks configure secret-detection --severity high</code></pre>
+
+            <h3>Compliance Commands</h3>
+            <pre><code># Check project compliance
+aigentflow compliance check --project my-project
+
+# Generate compliance report
+aigentflow compliance report --standard SOC2
+
+# View compliance dashboard
+aigentflow compliance dashboard --format json</code></pre>
+        </section>
+
+        <!-- Self-Evolution Section -->
+        <section id="self-evolution">
+            <h2>Self-Evolution System</h2>
+            <p>Aigentflow can automatically improve itself by detecting patterns in execution traces and generating new specialized agents.</p>
+
+            <h3>How It Works</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Execution Tracing</h4>
+                        <p>All agent executions are traced and stored, capturing agent paths, outcomes, and human interventions.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Pattern Detection</h4>
+                        <p>The Pattern Miner analyzes traces to identify capability gaps, intervention patterns, and routing inefficiencies.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Agent Generation</h4>
+                        <p>Using DSPy, new agents are generated from detected patterns and validated against constitutional rules.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Tournament &amp; Promotion</h4>
+                        <p>New agents compete against existing ones using TrueSkill rating. Winners get promoted to production after canary deployment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Self-Evolution Commands</h3>
+            <pre><code># Seed trace data for testing
+aigentflow evolution seed-traces --count 50
+
+# Run pattern detection
+aigentflow evolution detect-patterns
+
+# View detected patterns
+aigentflow evolution list-patterns --count
+
+# Generate agent from pattern
+aigentflow evolution generate-agent --pattern-id 1
+
+# Run tournament matches
+aigentflow evolution tournament --matches 15
+
+# View agent ratings
+aigentflow evolution ratings</code></pre>
+
+            <h3>Safety Guardrails</h3>
+            <div class="alert alert-warning">
+                <strong>Constitutional Validation:</strong> All generated agents must pass constitutional rules before deployment.
+            </div>
+
+            <ul>
+                <li><strong>Shadow Mode:</strong> New agents run in parallel without affecting output</li>
+                <li><strong>Minimum Matches:</strong> 12+ tournament matches required before promotion</li>
+                <li><strong>Human Approval:</strong> Generated agents require explicit approval</li>
+                <li><strong>Canary Deployment:</strong> Gradual rollout (10% &rarr; 25% &rarr; 50% &rarr; 100%)</li>
+                <li><strong>Kill Switch:</strong> Emergency disable for any agent</li>
+            </ul>
+
+            <h3>TrueSkill Rating System</h3>
+            <p>Agents are rated using Microsoft's TrueSkill algorithm:</p>
+            <table>
+                <tr><th>Metric</th><th>Description</th></tr>
+                <tr><td>Mu (&#956;)</td><td>Estimated skill level</td></tr>
+                <tr><td>Sigma (&#963;)</td><td>Uncertainty in the estimate</td></tr>
+                <tr><td>Rating</td><td>&#956; - 3&#963; (conservative estimate)</td></tr>
+            </table>
+        </section>
+
+        <!-- Enterprise Section -->
+        <section id="enterprise">
+            <h2>Enterprise Features</h2>
+
+            <h3>Multi-Tenant Architecture</h3>
+            <p>Enterprise deployment supports multiple isolated tenants:</p>
+            <ul>
+                <li>Tenant isolation using Row-Level Security (RLS) pattern</li>
+                <li>Per-tenant quotas (API requests, tokens, storage)</li>
+                <li>Per-tenant rate limiting</li>
+                <li>Per-tenant audit logs</li>
+                <li>Tenant provisioning and suspension</li>
+            </ul>
+
+            <pre><code># Create a tenant
+aigentflow tenant create --id acme-corp
+
+# Switch tenant context
+aigentflow tenant switch --id acme-corp
+
+# View tenant quota
+aigentflow tenant quota --id acme-corp</code></pre>
+
+            <h3>Model Abstraction Layer</h3>
+            <p>Support for multiple LLM providers with intelligent routing:</p>
+            <table>
+                <tr><th>Provider</th><th>Models</th></tr>
+                <tr><td>Anthropic</td><td>Claude 4, Claude 3.5 Sonnet</td></tr>
+                <tr><td>OpenAI</td><td>GPT-4o, GPT-4 Turbo</td></tr>
+            </table>
+
+            <pre><code># List available models
+aigentflow models list
+
+# Test provider connectivity
+aigentflow models test --provider anthropic
+
+# Configure routing
+aigentflow config model.fallbackProvider openai</code></pre>
+
+            <h3>Feature Flags</h3>
+            <p>Control feature rollout with sophisticated targeting:</p>
+            <ul>
+                <li>Percentage-based rollout</li>
+                <li>User/tenant targeting rules</li>
+                <li>A/B experiment tracking</li>
+                <li>Emergency kill switches</li>
+                <li>Stale flag detection</li>
+            </ul>
+
+            <pre><code># Create a feature flag
+aigentflow flags create --name new-dashboard --default false
+
+# Configure targeting
+aigentflow flags rollout --name new-dashboard --percentage 25
+
+# Evaluate flag
+aigentflow flags evaluate --name new-dashboard --context '{"userId": "123"}'</code></pre>
+
+            <h3>GDPR Operations</h3>
+            <p>Built-in support for GDPR data subject requests:</p>
+            <ul>
+                <li><strong>Data Export:</strong> Export all user data in portable format</li>
+                <li><strong>Data Deletion:</strong> Cascade deletion with verification</li>
+                <li><strong>Consent Management:</strong> Track consent per purpose</li>
+                <li><strong>Article 30 Records:</strong> Processing activity records</li>
+            </ul>
+
+            <pre><code># Process data subject request
+aigentflow gdpr dsar --type export --subject-id user@example.com
+
+# View consent status
+aigentflow gdpr consent list --subject-id user@example.com
+
+# Generate Article 30 records
+aigentflow gdpr article30 --format pdf</code></pre>
+
+            <h3>Incident Management</h3>
+            <pre><code># List active incidents
+aigentflow incident list
+
+# Create incident
+aigentflow incident create --severity P2 --title "API latency spike"
+
+# Execute runbook
+aigentflow incident runbook --id INC-1234</code></pre>
+        </section>
+
+        <!-- Implementation Checkpoints -->
+        <section id="checkpoints">
+            <h2>Implementation Checkpoints</h2>
+            <p>Aigentflow is built in 8 major checkpoints, each with validation criteria:</p>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP0</span>
+                    <h4>Foundation</h4>
+                </div>
+                <p>CLI framework, state machine, persistence, hooks, CLAUDE.md generator, checkpoint recovery, audit logging</p>
+                <span class="badge badge-success">59 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP1</span>
+                    <h4>Design System</h4>
+                </div>
+                <p>Agent framework, all 14 agents, orchestrator, skills framework, MCP server config, activity system</p>
+                <span class="badge badge-success">145 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP2</span>
+                    <h4>Git Worktrees</h4>
+                </div>
+                <p>Git agent, feature worktree isolation, parallel FE+BE agents, conflict detection</p>
+                <span class="badge badge-success">40 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP3</span>
+                    <h4>Build &amp; Test</h4>
+                </div>
+                <p>Frontend/Backend developers, Tester, Bug Fixer, Reviewer, lesson extraction</p>
+                <span class="badge badge-success">60 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP4</span>
+                    <h4>Integration</h4>
+                </div>
+                <p>Merge workflow, integration branch, CI/CD, release workflow</p>
+                <span class="badge badge-success">38 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP5</span>
+                    <h4>Self-Evolution</h4>
+                </div>
+                <p>Execution tracing, pattern detection, agent generation, tournament system</p>
+                <span class="badge badge-success">68 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP6</span>
+                    <h4>Enterprise Ops</h4>
+                </div>
+                <p>Incident response, GDPR operations, compliance dashboards, vendor security</p>
+                <span class="badge badge-success">72 tests</span>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-header">
+                    <span class="checkpoint-number">CP7</span>
+                    <h4>Platform Infra</h4>
+                </div>
+                <p>Model abstraction, multi-tenant, feature flags, GenUI output</p>
+                <span class="badge badge-success">75 tests</span>
+            </div>
+
+            <p style="margin-top: 1rem;"><strong>Total: 557 tests</strong></p>
+        </section>
+
+        <!-- Troubleshooting Section -->
+        <section id="troubleshooting">
+            <h2>Troubleshooting</h2>
+
+            <h3>Common Issues</h3>
+
+            <h4>API Key Issues</h4>
+            <div class="alert alert-danger">
+                <strong>Error:</strong> Invalid API key or authentication failed
+            </div>
+            <pre><code># Verify API key is set
+aigentflow config anthropicApiKey --global
+
+# Reset API key
+aigentflow config anthropicApiKey YOUR_NEW_KEY --global</code></pre>
+
+            <h4>Project Not Found</h4>
+            <div class="alert alert-danger">
+                <strong>Error:</strong> Not in an Aigentflow project
+            </div>
+            <pre><code># Make sure you're in a project directory
+cd projects/my-project
+
+# Or initialize a new project
+aigentflow init my-project</code></pre>
+
+            <h4>Agent Failures</h4>
+            <div class="alert alert-warning">
+                <strong>Warning:</strong> Agent failed after 3 retries, escalating
+            </div>
+            <ul>
+                <li>Check the debug output: <code>aigentflow run "task" --debug</code></li>
+                <li>View execution history: <code>aigentflow history --agent failed_agent</code></li>
+                <li>Reduce complexity by breaking down the task</li>
+            </ul>
+
+            <h4>Git Worktree Conflicts</h4>
+            <div class="alert alert-warning">
+                <strong>Warning:</strong> Conflict detected between worktrees
+            </div>
+            <pre><code># View conflict details
+aigentflow status --worktrees
+
+# Manually resolve in the worktree directory
+cd ../project-feature-branch
+git status
+# ... resolve conflicts ...
+git add . && git commit</code></pre>
+
+            <h3>Debug Mode</h3>
+            <pre><code># Enable debug output
+aigentflow run "task" --debug
+
+# Or set globally
+aigentflow config debug true --global</code></pre>
+
+            <h3>Reset and Recovery</h3>
+            <pre><code># Abort current operation
+aigentflow abort --force
+
+# Rollback to last checkpoint
+aigentflow abort --rollback
+
+# Reset configuration
+aigentflow config --reset
+
+# Clear project state
+rm -rf .aigentflow/state.db</code></pre>
+
+            <h3>Emergency Commands</h3>
+            <pre><code># Kill switch for self-evolution
+aigentflow admin emergency --disable-evolution
+
+# Disable generated agents
+aigentflow admin emergency --disable-generated-agents
+
+# Pause all operations
+aigentflow admin emergency --pause-all</code></pre>
+
+            <h3>Getting Help</h3>
+            <pre><code># View command help
+aigentflow --help
+aigentflow run --help
+
+# Check version
+aigentflow --version</code></pre>
+        </section>
+
+        <!-- Quick Reference -->
+        <section id="quick-reference">
+            <h2>Quick Reference</h2>
+
+            <h3>Essential Commands</h3>
+            <table>
+                <tr><th>Command</th><th>Description</th></tr>
+                <tr><td><code>aigentflow init &lt;name&gt;</code></td><td>Create new project</td></tr>
+                <tr><td><code>aigentflow run "&lt;prompt&gt;"</code></td><td>Execute a task</td></tr>
+                <tr><td><code>aigentflow status</code></td><td>View project status</td></tr>
+                <tr><td><code>aigentflow approve</code></td><td>Approve pending checkpoint</td></tr>
+                <tr><td><code>aigentflow abort</code></td><td>Cancel current operation</td></tr>
+                <tr><td><code>aigentflow history</code></td><td>View execution history</td></tr>
+                <tr><td><code>aigentflow lessons</code></td><td>View learned lessons</td></tr>
+            </table>
+
+            <h3>Workflow Shortcuts</h3>
+            <pre><code># Quick feature with auto-approve (use carefully)
+aigentflow run "Add dark mode" --auto-approve --auto-merge
+
+# Design-only (stop before implementation)
+aigentflow run "Design user profile page" --stop-at design
+
+# Test-only run
+aigentflow run "Run all tests" --agent tester</code></pre>
+
+            <h3>Project Structure</h3>
+            <pre><code>my-project/
+├── .aigentflow/
+│   ├── config.json      # Project configuration
+│   └── state.db         # State persistence
+├── designs/
+│   ├── mockups/         # HTML mockups
+│   ├── styles/          # Design tokens, CSS
+│   └── flows/           # User flow diagrams
+├── src/                 # Source code
+├── tests/               # Test files
+├── CLAUDE.md            # Project context for AI
+└── package.json         # Dependencies</code></pre>
+        </section>
+    </div>
+
+    <footer>
+        <p>Aigentflow v2.1.0 | Multi-Agent Orchestrator for Full-Stack Development</p>
+        <p>Built with Commander.js, TypeScript, SQLite | Powered by Claude CLI (dev) &amp; Anthropic API (prod)</p>
+    </footer>
+</body>
+</html>

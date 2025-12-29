@@ -1,0 +1,1012 @@
+# Aigentflow Architecture - GenUI Output Format
+# This document renders the architecture.md content using the GenUI component system
+# Version: 1.5.0
+
+---
+# Root Container
+type: "container"
+props:
+  padding: "lg"
+  background: "default"
+children:
+
+  # ============================================
+  # HEADER
+  # ============================================
+  - type: "stack"
+    props:
+      direction: "vertical"
+      gap: "md"
+      align: "center"
+    children:
+      - type: "heading"
+        props:
+          content: "Aigentflow"
+          level: 1
+          icon: "cpu"
+
+      - type: "text"
+        props:
+          content: "Multi-Agent Orchestrator Architecture"
+          variant: "body"
+          color: "muted"
+
+      - type: "stack"
+        props:
+          direction: "horizontal"
+          gap: "sm"
+        children:
+          - type: "badge"
+            props:
+              label: "v1.5.0"
+              variant: "info"
+          - type: "badge"
+            props:
+              label: "CLI-First"
+              variant: "default"
+          - type: "badge"
+            props:
+              label: "Enterprise-Grade"
+              variant: "success"
+
+  # ============================================
+  # QUICK STATS
+  # ============================================
+  - type: "section"
+    props:
+      title: "System Overview"
+      level: 2
+      anchor: "overview"
+    children:
+      - type: "grid"
+        props:
+          columns: 4
+          gap: "md"
+        children:
+          - type: "stat"
+            props:
+              label: "Agents"
+              value: 14
+              icon: "users"
+              color: "info"
+
+          - type: "stat"
+            props:
+              label: "Skills"
+              value: "40+"
+              icon: "zap"
+              color: "success"
+
+          - type: "stat"
+            props:
+              label: "MCP Servers"
+              value: 7
+              icon: "server"
+              color: "warning"
+
+          - type: "stat"
+            props:
+              label: "Prompt Layers"
+              value: 18
+              icon: "layers"
+              color: "accent"
+
+  # ============================================
+  # CORE PHILOSOPHY
+  # ============================================
+  - type: "section"
+    props:
+      title: "Core Philosophy"
+      level: 2
+      anchor: "philosophy"
+    children:
+      - type: "card"
+        props:
+          title: "Design Principles"
+          icon: "compass"
+          collapsible: true
+          default_collapsed: false
+        children:
+          - type: "grid"
+            props:
+              columns: 2
+              gap: "md"
+            children:
+              - type: "stack"
+                props:
+                  direction: "vertical"
+                  gap: "sm"
+                children:
+                  - type: "text"
+                    props:
+                      content: "CLI-First, UI-Later"
+                      weight: "bold"
+                  - type: "text"
+                    props:
+                      content: "All functionality accessible via command line before any GUI"
+                      color: "muted"
+                      variant: "caption"
+
+              - type: "stack"
+                props:
+                  direction: "vertical"
+                  gap: "sm"
+                children:
+                  - type: "text"
+                    props:
+                      content: "Structured Outputs Only"
+                      weight: "bold"
+                  - type: "text"
+                    props:
+                      content: "Every agent returns validated JSON with routing hints"
+                      color: "muted"
+                      variant: "caption"
+
+              - type: "stack"
+                props:
+                  direction: "vertical"
+                  gap: "sm"
+                children:
+                  - type: "text"
+                    props:
+                      content: "Design Before Code"
+                      weight: "bold"
+                  - type: "text"
+                    props:
+                      content: "UI mockups must be approved before frontend development"
+                      color: "muted"
+                      variant: "caption"
+
+              - type: "stack"
+                props:
+                  direction: "vertical"
+                  gap: "sm"
+                children:
+                  - type: "text"
+                    props:
+                      content: "Two-Tier Compliance"
+                      weight: "bold"
+                  - type: "text"
+                    props:
+                      content: "Platform compliance mandatory, project compliance optional"
+                      color: "muted"
+                      variant: "caption"
+
+      - type: "card"
+        props:
+          title: "V1 → V2 Architectural Shift"
+          icon: "git-branch"
+          collapsible: true
+          default_collapsed: false
+        children:
+          - type: "table"
+            props:
+              columns:
+                - { key: "aspect", label: "Aspect", width: "20%" }
+                - { key: "v1", label: "V1 (Failed)", width: "40%" }
+                - { key: "v2", label: "V2 (New)", width: "40%" }
+              rows:
+                - aspect: "Context"
+                  v1: "2000 char truncation"
+                  v2: "200K tokens with smart summarization"
+                - aspect: "Outputs"
+                  v1: "Freeform text"
+                  v2: "Strict JSON schemas"
+                - aspect: "Routing"
+                  v1: "Simple stage map"
+                  v2: "Hybrid rule + AI reasoning"
+                - aspect: "Feedback"
+                  v1: "None"
+                  v2: "BUILDER→TESTER→BUG_FIXER cycles"
+                - aspect: "Orchestrator"
+                  v1: "Procedural dispatcher"
+                  v2: "AI agent with reasoning"
+              striped: true
+
+  # ============================================
+  # AGENTS SECTION
+  # ============================================
+  - type: "section"
+    props:
+      title: "Agent Ecosystem"
+      level: 2
+      anchor: "agents"
+    children:
+      - type: "text"
+        props:
+          content: "14 specialized agents work together through the orchestrator to complete software development tasks."
+          color: "muted"
+
+      - type: "grid"
+        props:
+          columns: 3
+          gap: "md"
+        children:
+          # Orchestrator
+          - type: "card"
+            props:
+              title: "Orchestrator"
+              icon: "cpu"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "SYSTEM"
+                  variant: "error"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Central coordinator using StateGraph. Routes tasks, synthesizes outputs, manages workflow."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Hybrid rule + AI routing", icon: "git-branch" }
+                    - { content: "Context management", icon: "database" }
+                    - { content: "Error recovery", icon: "refresh-cw" }
+
+          # Project Manager
+          - type: "card"
+            props:
+              title: "Project Manager"
+              icon: "clipboard"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "RESTRICTED"
+                  variant: "warning"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Breaks requirements into epics, features, and tasks with dependency graphs."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Epic/feature decomposition", icon: "list" }
+                    - { content: "Priority assignment", icon: "flag" }
+                    - { content: "Dependency mapping", icon: "git-merge" }
+
+          # Architect
+          - type: "card"
+            props:
+              title: "Architect"
+              icon: "box"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "RESTRICTED"
+                  variant: "warning"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Creates ADRs, makes tech stack decisions, defines system boundaries."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "MADR 4.0 format", icon: "file-text" }
+                    - { content: "Security architecture", icon: "shield" }
+                    - { content: "Tech stack selection", icon: "layers" }
+
+          # Analyst
+          - type: "card"
+            props:
+              title: "Analyst"
+              icon: "search"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Researches best practices, analyzes requirements, provides recommendations."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Best practice research", icon: "book" }
+                    - { content: "Requirements analysis", icon: "check-square" }
+                    - { content: "Technical recommendations", icon: "thumbs-up" }
+
+          # UI Designer
+          - type: "card"
+            props:
+              title: "UI Designer"
+              icon: "palette"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Creates design tokens, component specs, mockups. Requires approval before dev."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Design token system", icon: "droplet" }
+                    - { content: "Component specifications", icon: "grid" }
+                    - { content: "Approval workflow", icon: "check-circle" }
+
+          # Frontend Developer
+          - type: "card"
+            props:
+              title: "Frontend Developer"
+              icon: "layout"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Implements UI from approved designs. React, Vue, accessibility, responsive."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Component implementation", icon: "code" }
+                    - { content: "Design system adherence", icon: "check" }
+                    - { content: "Accessibility (WCAG)", icon: "eye" }
+
+          # Backend Developer
+          - type: "card"
+            props:
+              title: "Backend Developer"
+              icon: "server"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "APIs, database schemas, business logic. Python, TypeScript, Go."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "API implementation", icon: "link" }
+                    - { content: "Database design", icon: "database" }
+                    - { content: "Service architecture", icon: "box" }
+
+          # Tester
+          - type: "card"
+            props:
+              title: "Tester"
+              icon: "check-square"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Writes and executes tests. Unit, integration, E2E. Coverage tracking."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Test generation", icon: "file-plus" }
+                    - { content: "Coverage analysis", icon: "percent" }
+                    - { content: "Regression detection", icon: "alert-triangle" }
+
+          # Bug Fixer
+          - type: "card"
+            props:
+              title: "Bug Fixer"
+              icon: "tool"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Analyzes test failures, generates targeted patches. Max 3 retries."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Failure analysis", icon: "search" }
+                    - { content: "Patch generation", icon: "edit" }
+                    - { content: "Root cause detection", icon: "crosshair" }
+
+          # Reviewer
+          - type: "card"
+            props:
+              title: "Reviewer"
+              icon: "eye"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Code review with security checklist. Extracts lessons for learning system."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Security review", icon: "shield" }
+                    - { content: "Code quality", icon: "star" }
+                    - { content: "Lesson extraction", icon: "book-open" }
+
+          # Git Agent
+          - type: "card"
+            props:
+              title: "Git Agent"
+              icon: "git-branch"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "RESTRICTED"
+                  variant: "warning"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Branch management, commits, worktrees. Secret scanning on all operations."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Branch operations", icon: "git-branch" }
+                    - { content: "Commit management", icon: "git-commit" }
+                    - { content: "Secret scanning", icon: "lock" }
+
+          # Merge Conflict Resolver
+          - type: "card"
+            props:
+              title: "Merge Conflict Resolver"
+              icon: "git-merge"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "INTERNAL"
+                  variant: "info"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Analyzes and resolves git merge conflicts intelligently."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Conflict detection", icon: "alert-circle" }
+                    - { content: "Resolution strategies", icon: "git-merge" }
+                    - { content: "Context preservation", icon: "file-text" }
+
+          # Compliance Agent
+          - type: "card"
+            props:
+              title: "Compliance Agent"
+              icon: "shield"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "RESTRICTED"
+                  variant: "warning"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Monitors security, maintains audit logs, verifies compliance requirements."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "SOC 2 / GDPR checks", icon: "check-circle" }
+                    - { content: "Audit logging", icon: "file-text" }
+                    - { content: "Vulnerability scanning", icon: "search" }
+
+          # Project Analyzer
+          - type: "card"
+            props:
+              title: "Project Analyzer"
+              icon: "bar-chart"
+              collapsible: false
+            children:
+              - type: "badge"
+                props:
+                  label: "PUBLIC"
+                  variant: "success"
+                  size: "sm"
+              - type: "text"
+                props:
+                  content: "Scans existing codebases, generates claude.md, identifies patterns."
+                  variant: "caption"
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Codebase analysis", icon: "folder" }
+                    - { content: "Pattern detection", icon: "cpu" }
+                    - { content: "Context generation", icon: "file-text" }
+
+  # ============================================
+  # SKILLS SECTION
+  # ============================================
+  - type: "section"
+    props:
+      title: "Skills Catalog"
+      level: 2
+      anchor: "skills"
+    children:
+      - type: "text"
+        props:
+          content: "Skills are modular capability packs that agents invoke to perform specific tasks."
+          color: "muted"
+
+      - type: "grid"
+        props:
+          columns: 4
+          gap: "sm"
+        children:
+          - type: "card"
+            props:
+              title: "Coding"
+              icon: "code"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - "React/Vue components"
+                    - "Python/TypeScript/Go"
+                    - "Database queries"
+                    - "API endpoints"
+                    - "GraphQL schemas"
+
+          - type: "card"
+            props:
+              title: "Testing"
+              icon: "check-square"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - "Unit tests (Jest/Pytest)"
+                    - "Integration tests"
+                    - "E2E (Playwright)"
+                    - "Load testing"
+                    - "Coverage analysis"
+
+          - type: "card"
+            props:
+              title: "Security"
+              icon: "shield"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - "Secret scanning"
+                    - "SAST analysis"
+                    - "Dependency audit"
+                    - "OWASP checks"
+                    - "Vulnerability scan"
+
+          - type: "card"
+            props:
+              title: "Compliance"
+              icon: "clipboard"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - "SOC 2 verification"
+                    - "GDPR checks"
+                    - "HIPAA validation"
+                    - "License scanning"
+                    - "Audit logging"
+
+  # ============================================
+  # MCP SERVERS
+  # ============================================
+  - type: "section"
+    props:
+      title: "MCP Servers"
+      level: 2
+      anchor: "mcp"
+    children:
+      - type: "text"
+        props:
+          content: "Model Context Protocol servers provide standardized tool access for agents."
+          color: "muted"
+
+      - type: "table"
+        props:
+          columns:
+            - { key: "server", label: "Server", width: "15%" }
+            - { key: "purpose", label: "Purpose", width: "35%" }
+            - { key: "tools", label: "Key Tools", width: "35%" }
+            - { key: "security", label: "Security", width: "15%" }
+          rows:
+            - server: "filesystem"
+              purpose: "File read/write operations"
+              tools: "read_file, write_file, list_directory, search_files"
+              security: "Path restrictions"
+            - server: "git"
+              purpose: "Version control operations"
+              tools: "git_status, git_commit, git_branch, git_diff"
+              security: "Branch protection"
+            - server: "terminal"
+              purpose: "Command execution"
+              tools: "run_command, run_script"
+              security: "Command allowlist"
+            - server: "database"
+              purpose: "Database queries"
+              tools: "query, schema, migrate"
+              security: "Read-only default"
+            - server: "github"
+              purpose: "GitHub API integration"
+              tools: "create_pr, list_issues, review"
+              security: "Token scoped"
+            - server: "web"
+              purpose: "External API access"
+              tools: "http_request, fetch_url"
+              security: "Domain allowlist"
+            - server: "memory"
+              purpose: "Persistent context storage"
+              tools: "store, retrieve, search"
+              security: "Tenant isolated"
+          striped: true
+          compact: true
+
+  # ============================================
+  # PROMPT ARCHITECTURE
+  # ============================================
+  - type: "section"
+    props:
+      title: "18-Layer Prompt Hierarchy"
+      level: 2
+      anchor: "prompts"
+    children:
+      - type: "card"
+        props:
+          title: "Prompt Layers"
+          icon: "layers"
+          collapsible: true
+        children:
+          - type: "timeline"
+            props:
+              events:
+                - timestamp: "L1-3"
+                  title: "Identity Layer"
+                  description: "System purpose, agent goals, role specialization"
+                  status: "completed"
+                  icon: "user"
+                - timestamp: "L4-6"
+                  title: "Operational Layer"
+                  description: "Workflows, output formatting, behavioral instructions"
+                  status: "completed"
+                  icon: "settings"
+                - timestamp: "L7-9"
+                  title: "Context Layer"
+                  description: "Project metadata, codebase structure, relevant files"
+                  status: "completed"
+                  icon: "folder"
+                - timestamp: "L10-13"
+                  title: "Reasoning Layer"
+                  description: "Control flow, dynamic variables, few-shot examples, delegation"
+                  status: "completed"
+                  icon: "cpu"
+                - timestamp: "L14-18"
+                  title: "Meta Layer"
+                  description: "Expertise injection, meta-instructions, self-improvement"
+                  status: "completed"
+                  icon: "zap"
+
+      - type: "card"
+        props:
+          title: "Token Allocation"
+          icon: "pie-chart"
+          collapsible: true
+        children:
+          - type: "progress"
+            props:
+              value: 5
+              label: "System Prompt (5K tokens)"
+              variant: "bar"
+              color: "info"
+          - type: "progress"
+            props:
+              value: 10
+              label: "Tools (10K tokens)"
+              variant: "bar"
+              color: "warning"
+          - type: "progress"
+            props:
+              value: 15
+              label: "Examples (15K tokens)"
+              variant: "bar"
+              color: "success"
+          - type: "progress"
+            props:
+              value: 50
+              label: "Context / RAG (50K tokens)"
+              variant: "bar"
+              color: "error"
+          - type: "progress"
+            props:
+              value: 15
+              label: "Message History (15K tokens)"
+              variant: "bar"
+              color: "accent"
+
+  # ============================================
+  # COMPLIANCE
+  # ============================================
+  - type: "section"
+    props:
+      title: "Security & Compliance"
+      level: 2
+      anchor: "compliance"
+    children:
+      - type: "columns"
+        props:
+          ratios: [1, 1]
+          gap: "md"
+        children:
+          - type: "card"
+            props:
+              title: "Platform Compliance (Mandatory)"
+              icon: "shield"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "SOC 2 Type II", icon: "check", color: "success" }
+                    - { content: "GDPR Compliance", icon: "check", color: "success" }
+                    - { content: "Secret Scanning", icon: "check", color: "success" }
+                    - { content: "Audit Logging", icon: "check", color: "success" }
+                    - { content: "MFA Required", icon: "check", color: "success" }
+
+          - type: "card"
+            props:
+              title: "Project Compliance (Optional)"
+              icon: "clipboard"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "HIPAA", icon: "circle", color: "muted" }
+                    - { content: "PCI-DSS", icon: "circle", color: "muted" }
+                    - { content: "SOX", icon: "circle", color: "muted" }
+                    - { content: "ISO 27001", icon: "circle", color: "muted" }
+                    - { content: "EU AI Act", icon: "circle", color: "muted" }
+
+      - type: "alert"
+        props:
+          variant: "info"
+          title: "Environment-Aware Controls"
+          message: "Controls scale by environment: Local (minimal) → Development → Staging → Production (full)"
+
+  # ============================================
+  # USER FLOWS
+  # ============================================
+  - type: "section"
+    props:
+      title: "User Flows"
+      level: 2
+      anchor: "flows"
+    children:
+      - type: "grid"
+        props:
+          columns: 3
+          gap: "md"
+        children:
+          - type: "card"
+            props:
+              title: "New Project"
+              icon: "plus-circle"
+            children:
+              - type: "timeline"
+                props:
+                  events:
+                    - { title: "aigentflow init", status: "completed" }
+                    - { title: "Tech stack selection", status: "completed" }
+                    - { title: "Compliance config", status: "completed" }
+                    - { title: "CLAUDE.md generated", status: "completed" }
+
+          - type: "card"
+            props:
+              title: "Feature Development"
+              icon: "code"
+            children:
+              - type: "timeline"
+                props:
+                  events:
+                    - { title: "Task decomposition", status: "completed" }
+                    - { title: "Design (if UI)", status: "completed" }
+                    - { title: "Implementation", status: "current" }
+                    - { title: "Test & Review", status: "pending" }
+
+          - type: "card"
+            props:
+              title: "Bug Fix"
+              icon: "tool"
+            children:
+              - type: "timeline"
+                props:
+                  events:
+                    - { title: "Failure analysis", status: "completed" }
+                    - { title: "Patch generation", status: "completed" }
+                    - { title: "Test verification", status: "current" }
+                    - { title: "Merge", status: "pending" }
+
+  # ============================================
+  # SELF-EVOLUTION
+  # ============================================
+  - type: "section"
+    props:
+      title: "Self-Evolution Framework"
+      level: 2
+      anchor: "evolution"
+    children:
+      - type: "text"
+        props:
+          content: "The system continuously improves through competitive evaluation and automated optimization."
+          color: "muted"
+
+      - type: "grid"
+        props:
+          columns: 2
+          gap: "md"
+        children:
+          - type: "card"
+            props:
+              title: "Evaluation"
+              icon: "bar-chart"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Best-of-N sampling (N=8-16)", icon: "layers" }
+                    - { content: "LLM-as-Judge panels", icon: "users" }
+                    - { content: "TrueSkill ratings", icon: "trending-up" }
+                    - { content: "A/B testing", icon: "git-branch" }
+
+          - type: "card"
+            props:
+              title: "Optimization"
+              icon: "zap"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "DSPy MIPROv2", icon: "cpu" }
+                    - { content: "EvoPrompt genetic algorithms", icon: "shuffle" }
+                    - { content: "Constitutional AI", icon: "shield" }
+                    - { content: "Process Reward Models", icon: "award" }
+
+          - type: "card"
+            props:
+              title: "Safety"
+              icon: "shield"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Shadow deployment", icon: "eye" }
+                    - { content: "Canary rollouts", icon: "percent" }
+                    - { content: "Automated rollback", icon: "rotate-ccw" }
+                    - { content: "Regression guards", icon: "alert-triangle" }
+
+          - type: "card"
+            props:
+              title: "Cost Control"
+              icon: "dollar-sign"
+            children:
+              - type: "list"
+                props:
+                  items:
+                    - { content: "Model distillation", icon: "minimize" }
+                    - { content: "Query routing", icon: "git-branch" }
+                    - { content: "Early stopping", icon: "stop-circle" }
+                    - { content: "Token compression", icon: "archive" }
+
+  # ============================================
+  # CLI COMMANDS
+  # ============================================
+  - type: "section"
+    props:
+      title: "CLI Commands"
+      level: 2
+      anchor: "cli"
+    children:
+      - type: "table"
+        props:
+          columns:
+            - { key: "command", label: "Command", width: "30%" }
+            - { key: "description", label: "Description", width: "70%" }
+          rows:
+            - command: "aigentflow init"
+              description: "Initialize new project with tech stack and compliance config"
+            - command: "aigentflow import <path>"
+              description: "Import existing project with security scanning"
+            - command: "aigentflow run <task>"
+              description: "Execute task through agent orchestration"
+            - command: "aigentflow status"
+              description: "View current project and agent status"
+            - command: "aigentflow approve <id>"
+              description: "Approve pending design or code changes"
+            - command: "aigentflow config"
+              description: "View/modify configuration hierarchy"
+            - command: "aigentflow lessons"
+              description: "View extracted lessons and learning stats"
+            - command: "aigentflow compliance"
+              description: "Run compliance checks and view dashboard"
+          striped: true
+
+  # ============================================
+  # FOOTER ACTIONS
+  # ============================================
+  - type: "section"
+    props:
+      title: "Quick Actions"
+      level: 2
+      anchor: "actions"
+    children:
+      - type: "button_group"
+        props:
+          buttons:
+            - label: "Initialize Project"
+              variant: "primary"
+              icon: "plus"
+            - label: "Import Existing"
+              variant: "secondary"
+              icon: "download"
+            - label: "View Full Docs"
+              variant: "ghost"
+              icon: "book"
+        actions:
+          - { id: "init", command: "aigentflow init" }
+          - { id: "import", command: "aigentflow import ." }
+          - { id: "docs", command: "aigentflow docs" }
+
+  # ============================================
+  # DOCUMENT INFO
+  # ============================================
+  - type: "stack"
+    props:
+      direction: "horizontal"
+      gap: "md"
+      justify: "between"
+    children:
+      - type: "text"
+        props:
+          content: "Architecture v1.5.0"
+          variant: "caption"
+          color: "muted"
+
+      - type: "text"
+        props:
+          content: "32 Sections • 5 Appendices • ~9,500 lines"
+          variant: "caption"
+          color: "muted"
+
+      - type: "text"
+        props:
+          content: "Generated: December 2024"
+          variant: "caption"
+          color: "muted"

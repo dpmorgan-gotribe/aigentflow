@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aigentflow - Feature Flags</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vsc-bg': '#1e1e1e',
+                        'vsc-sidebar': '#252526',
+                        'vsc-activitybar': '#333333',
+                        'vsc-editor': '#1e1e1e',
+                        'vsc-titlebar': '#3c3c3c',
+                        'vsc-statusbar': '#007acc',
+                        'vsc-border': '#3c3c3c',
+                        'vsc-active': '#094771',
+                        'vsc-hover': '#2a2d2e',
+                        'vsc-accent': '#007acc',
+                        'vsc-text': '#cccccc',
+                        'vsc-text-dim': '#858585',
+                        'vsc-green': '#4ec9b0',
+                        'vsc-blue': '#569cd6',
+                        'vsc-yellow': '#dcdcaa',
+                        'vsc-orange': '#ce9178',
+                        'vsc-purple': '#c586c0',
+                        'vsc-red': '#f14c4c',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .activity-icon { transition: all 0.1s; }
+        .activity-icon:hover { color: white; }
+        .activity-icon.active { color: white; border-left: 2px solid #007acc; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
+        .slider-track { height: 6px; background: #3c3c3c; border-radius: 3px; }
+        .slider-fill { height: 6px; background: #007acc; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-vsc-bg text-vsc-text overflow-hidden">
+    <!-- Title Bar -->
+    <div class="h-8 bg-vsc-titlebar flex items-center px-4 text-sm border-b border-vsc-border">
+        <div class="flex items-center gap-4 flex-1">
+            <span class="text-vsc-text-dim">File</span>
+            <span class="text-vsc-text-dim">Edit</span>
+            <span class="text-vsc-text-dim">View</span>
+            <span class="text-vsc-text-dim">Agents</span>
+            <span class="text-vsc-text-dim">Platform</span>
+            <span class="text-vsc-text-dim">Help</span>
+        </div>
+        <div class="flex-1 text-center text-vsc-text-dim">Aigentflow - Enterprise</div>
+        <div class="flex-1 flex justify-end gap-3 text-vsc-text-dim items-center">
+            <span class="px-2 py-0.5 bg-vsc-purple/20 text-vsc-purple rounded text-xs">12 Flags</span>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-32px)]">
+        <!-- Activity Bar -->
+        <div class="w-12 bg-vsc-activitybar flex flex-col items-center py-2 border-r border-vsc-border">
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 0h-9L7 1.5V6H2.5L1 7.5v15.07L2.5 24h12.07L16 22.57V18h4.7l1.3-1.43V4.5L17.5 0z"/></svg></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1v3h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2v-3h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2z"/></svg></div>
+            <div class="activity-icon active w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Feature Flags">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z"/></svg>
+            </div>
+            <div class="flex-1"></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94z"/></svg></div>
+        </div>
+
+        <!-- Left Sidebar -->
+        <div class="w-56 bg-vsc-sidebar border-r border-vsc-border overflow-auto">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">Feature Flags</div>
+
+            <!-- Filter Tabs -->
+            <div class="p-2 border-b border-vsc-border">
+                <div class="flex flex-wrap gap-1">
+                    <button class="px-2 py-1 text-xs bg-vsc-accent/20 text-vsc-accent rounded">All</button>
+                    <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Enabled</button>
+                    <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Disabled</button>
+                    <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Experiments</button>
+                    <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Stale</button>
+                </div>
+            </div>
+
+            <!-- Flag List -->
+            <div class="py-2">
+                <div class="px-4 py-2 bg-vsc-active cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-green"></span>
+                        <span class="text-sm">new-dashboard-ui</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5">Release • 100%</div>
+                </div>
+                <div class="px-4 py-2 hover:bg-vsc-hover cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-purple"></span>
+                        <span class="text-sm">ai-suggestions-v2</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5">Experiment • 40%</div>
+                </div>
+                <div class="px-4 py-2 hover:bg-vsc-hover cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-green"></span>
+                        <span class="text-sm">self-evolution</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5">Release • 100%</div>
+                </div>
+                <div class="px-4 py-2 hover:bg-vsc-hover cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-yellow"></span>
+                        <span class="text-sm">multi-tenant</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5">Release • 50%</div>
+                </div>
+                <div class="px-4 py-2 hover:bg-vsc-hover cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-red"></span>
+                        <span class="text-sm">legacy-api-v1</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5 flex items-center gap-1">
+                        <svg class="w-3 h-3 text-vsc-orange" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z"/></svg>
+                        Ops • Stale
+                    </div>
+                </div>
+                <div class="px-4 py-2 hover:bg-vsc-hover cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-vsc-text-dim"></span>
+                        <span class="text-sm text-vsc-text-dim">beta-features</span>
+                    </div>
+                    <div class="text-xs text-vsc-text-dim mt-0.5">Release • Disabled</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="h-9 bg-vsc-titlebar flex items-center justify-between px-4 border-b border-vsc-border">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-vsc-purple" fill="currentColor" viewBox="0 0 24 24"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z"/></svg>
+                    <span class="text-sm font-medium">new-dashboard-ui</span>
+                    <span class="px-1.5 py-0.5 text-xs bg-vsc-green/20 text-vsc-green rounded">Enabled</span>
+                    <span class="px-1.5 py-0.5 text-xs bg-vsc-accent/20 text-vsc-accent rounded">Release</span>
+                </div>
+                <button class="px-3 py-1 bg-vsc-accent text-white rounded text-sm">+ Create Flag</button>
+            </div>
+
+            <!-- Flag Details -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="max-w-3xl">
+                    <!-- Overview -->
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg mb-6">
+                        <div class="p-4 border-b border-vsc-border">
+                            <h2 class="text-sm font-medium">Overview</h2>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-sm text-vsc-text-dim mb-1">Name</label>
+                                <div class="text-sm font-mono">new-dashboard-ui</div>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-vsc-text-dim mb-1">Description</label>
+                                <div class="text-sm">New redesigned dashboard interface with improved UX</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm text-vsc-text-dim mb-1">Type</label>
+                                    <div class="text-sm">Release</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-vsc-text-dim mb-1">Created</label>
+                                    <div class="text-sm">Jan 15, 2024</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-vsc-text-dim mb-1">Last Modified</label>
+                                    <div class="text-sm">2 days ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rollout -->
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg mb-6">
+                        <div class="p-4 border-b border-vsc-border">
+                            <h2 class="text-sm font-medium">Rollout Configuration</h2>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-sm text-vsc-text-dim">Percentage Rollout</label>
+                                    <span class="text-sm font-medium text-vsc-green">100%</span>
+                                </div>
+                                <div class="slider-track relative">
+                                    <div class="slider-fill" style="width: 100%"></div>
+                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow cursor-pointer"></div>
+                                </div>
+                                <div class="flex justify-between mt-1 text-xs text-vsc-text-dim">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1 text-xs bg-vsc-hover border border-vsc-border rounded">0%</button>
+                                <button class="px-3 py-1 text-xs bg-vsc-hover border border-vsc-border rounded">25%</button>
+                                <button class="px-3 py-1 text-xs bg-vsc-hover border border-vsc-border rounded">50%</button>
+                                <button class="px-3 py-1 text-xs bg-vsc-hover border border-vsc-border rounded">75%</button>
+                                <button class="px-3 py-1 text-xs bg-vsc-accent text-white rounded">100%</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Targeting Rules -->
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg mb-6">
+                        <div class="p-4 border-b border-vsc-border flex items-center justify-between">
+                            <h2 class="text-sm font-medium">Targeting Rules</h2>
+                            <button class="text-xs text-vsc-accent hover:underline">+ Add Rule</button>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <!-- Rule 1 -->
+                            <div class="p-3 bg-vsc-hover rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Rule 1: Beta Users</span>
+                                    <button class="text-xs text-vsc-text-dim hover:text-vsc-red">Remove</button>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="text-vsc-text-dim">IF</span>
+                                    <select class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm">
+                                        <option>user.tier</option>
+                                        <option>user.id</option>
+                                        <option>tenant.plan</option>
+                                    </select>
+                                    <select class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm">
+                                        <option>equals</option>
+                                        <option>contains</option>
+                                        <option>starts with</option>
+                                    </select>
+                                    <input type="text" value="beta" class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm w-24">
+                                    <span class="text-vsc-text-dim">THEN</span>
+                                    <span class="text-vsc-green">Enable</span>
+                                </div>
+                            </div>
+
+                            <!-- Rule 2 -->
+                            <div class="p-3 bg-vsc-hover rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Rule 2: Enterprise Tenants</span>
+                                    <button class="text-xs text-vsc-text-dim hover:text-vsc-red">Remove</button>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="text-vsc-text-dim">IF</span>
+                                    <select class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm">
+                                        <option>tenant.plan</option>
+                                    </select>
+                                    <select class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm">
+                                        <option>equals</option>
+                                    </select>
+                                    <input type="text" value="enterprise" class="px-2 py-1 bg-vsc-bg border border-vsc-border rounded text-sm w-24">
+                                    <span class="text-vsc-text-dim">THEN</span>
+                                    <span class="text-vsc-green">Enable</span>
+                                </div>
+                            </div>
+
+                            <!-- Default -->
+                            <div class="p-3 border border-dashed border-vsc-border rounded-lg">
+                                <div class="text-sm text-vsc-text-dim">Default (no rules match): <span class="text-vsc-text">Use percentage rollout (100%)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg">
+                        <div class="p-4 border-b border-vsc-border">
+                            <h2 class="text-sm font-medium">Metrics (Last 7 Days)</h2>
+                        </div>
+                        <div class="p-4 grid grid-cols-4 gap-4">
+                            <div>
+                                <div class="text-2xl font-semibold">12,450</div>
+                                <div class="text-xs text-vsc-text-dim">Evaluations</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-semibold text-vsc-green">12,450</div>
+                                <div class="text-xs text-vsc-text-dim">Enabled</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-semibold text-vsc-text-dim">0</div>
+                                <div class="text-xs text-vsc-text-dim">Disabled</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-semibold">2.3ms</div>
+                                <div class="text-xs text-vsc-text-dim">Avg Latency</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 flex justify-between">
+                        <button class="px-4 py-2 bg-vsc-red/20 text-vsc-red border border-vsc-red/30 rounded text-sm hover:bg-vsc-red/30">Archive Flag</button>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-vsc-hover border border-vsc-border rounded text-sm">Disable Flag</button>
+                            <button class="px-4 py-2 bg-vsc-accent text-white rounded text-sm">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Audit Log -->
+        <div class="w-64 bg-vsc-sidebar border-l border-vsc-border flex flex-col">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">
+                Audit Log
+            </div>
+            <div class="flex-1 overflow-auto p-3 space-y-2">
+                <div class="p-2 bg-vsc-hover rounded text-xs">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-vsc-accent">Rollout Changed</span>
+                        <span class="text-vsc-text-dim">2d ago</span>
+                    </div>
+                    <div class="text-vsc-text-dim">75% → 100%</div>
+                    <div class="text-vsc-text-dim">by admin@company.com</div>
+                </div>
+                <div class="p-2 bg-vsc-hover rounded text-xs">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-vsc-green">Rule Added</span>
+                        <span class="text-vsc-text-dim">5d ago</span>
+                    </div>
+                    <div class="text-vsc-text-dim">Enterprise Tenants rule</div>
+                    <div class="text-vsc-text-dim">by admin@company.com</div>
+                </div>
+                <div class="p-2 bg-vsc-hover rounded text-xs">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-vsc-accent">Rollout Changed</span>
+                        <span class="text-vsc-text-dim">1w ago</span>
+                    </div>
+                    <div class="text-vsc-text-dim">50% → 75%</div>
+                    <div class="text-vsc-text-dim">by admin@company.com</div>
+                </div>
+                <div class="p-2 bg-vsc-hover rounded text-xs">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-vsc-purple">Flag Created</span>
+                        <span class="text-vsc-text-dim">Jan 15</span>
+                    </div>
+                    <div class="text-vsc-text-dim">Initial creation at 10%</div>
+                    <div class="text-vsc-text-dim">by dev@company.com</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="h-6 bg-vsc-statusbar flex items-center px-3 text-xs text-white">
+        <div class="flex items-center gap-3">
+            <span>Feature Flags</span>
+        </div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-4">
+            <span>12 Flags • 8 Enabled • 2 Experiments</span>
+        </div>
+    </div>
+</body>
+</html>

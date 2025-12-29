@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentFlow - Git Branch Sidebar Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'af-dark': '#0a0a0f',
+                        'af-darker': '#05050a',
+                        'af-card': '#12121a',
+                        'af-border': '#1e1e2e',
+                        'af-purple': '#8b5cf6',
+                        'af-cyan': '#06b6d4',
+                        'af-green': '#10b981',
+                        'af-orange': '#f97316',
+                        'af-pink': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #12121a; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #2e2e3e; border-radius: 3px; }
+        .branch-line { border-left: 2px solid #8b5cf6; }
+        .branch-dot { width: 10px; height: 10px; border-radius: 50%; position: absolute; left: -6px; }
+    </style>
+</head>
+<body class="bg-af-dark text-gray-100 min-h-screen">
+    <!-- Top Navbar -->
+    <nav class="h-12 bg-af-darker border-b border-af-border flex items-center justify-between px-4">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-af-purple to-af-cyan rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">A</span>
+                </div>
+                <span class="font-semibold text-white">AGENTFLOW</span>
+            </div>
+            <span class="text-xs px-2 py-0.5 bg-af-card rounded text-gray-400">LIVE LOG STREAM</span>
+            <span class="flex items-center gap-1 text-xs text-af-green">
+                <span class="w-2 h-2 bg-af-green rounded-full animate-pulse"></span>
+                connected
+            </span>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Git Branch Quick Switcher -->
+            <div class="flex items-center gap-2 bg-af-card px-3 py-1.5 rounded-lg border border-af-border">
+                <svg class="w-4 h-4 text-af-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <span class="text-sm text-gray-300">feature/agent-improvements</span>
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+                <span class="text-gray-400">Active:</span>
+                <span class="text-af-cyan">0</span>
+                <span class="text-gray-400">Parallel:</span>
+                <span class="text-white">0/15</span>
+                <span class="text-gray-400">Cost:</span>
+                <span class="text-af-green">$0.00</span>
+            </div>
+            <button class="bg-af-purple hover:bg-af-purple/80 px-4 py-1.5 rounded-lg text-sm font-medium transition">
+                + New Project
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex h-[calc(100vh-48px)]">
+        <!-- Left Sidebar with Git Integration -->
+        <aside class="w-72 bg-af-darker border-r border-af-border flex flex-col">
+            <!-- Project Header -->
+            <div class="p-3 border-b border-af-border">
+                <div class="flex items-center justify-between">
+                    <span class="text-af-cyan font-medium">photography</span>
+                    <span class="text-xs px-2 py-0.5 bg-af-green/20 text-af-green rounded">0 Running</span>
+                </div>
+            </div>
+
+            <!-- Git Branches Section - NEW -->
+            <div class="border-b border-af-border">
+                <div class="flex items-center justify-between p-3 bg-af-card/50">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-af-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-200">Git Branches</span>
+                    </div>
+                    <button class="text-gray-500 hover:text-gray-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-3 space-y-1 max-h-48 overflow-y-auto scrollbar-thin">
+                    <!-- Current Branch -->
+                    <div class="flex items-center gap-2 px-2 py-1.5 bg-af-purple/20 rounded-lg border border-af-purple/30">
+                        <span class="w-2 h-2 bg-af-purple rounded-full"></span>
+                        <span class="text-sm text-af-purple font-medium flex-1">main</span>
+                        <span class="text-xs text-gray-500">current</span>
+                    </div>
+                    <!-- Feature Branches -->
+                    <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-af-card rounded-lg cursor-pointer group">
+                        <span class="w-2 h-2 bg-af-cyan rounded-full"></span>
+                        <span class="text-sm text-gray-300 group-hover:text-white flex-1">feature/gallery-ui</span>
+                        <span class="text-xs text-gray-600">2 ahead</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-af-card rounded-lg cursor-pointer group">
+                        <span class="w-2 h-2 bg-af-green rounded-full"></span>
+                        <span class="text-sm text-gray-300 group-hover:text-white flex-1">feature/auth-system</span>
+                        <span class="text-xs text-gray-600">5 ahead</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-af-card rounded-lg cursor-pointer group">
+                        <span class="w-2 h-2 bg-af-orange rounded-full"></span>
+                        <span class="text-sm text-gray-300 group-hover:text-white flex-1">bugfix/image-loading</span>
+                        <span class="text-xs text-gray-600">1 ahead</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1.5 hover:bg-af-card rounded-lg cursor-pointer group">
+                        <span class="w-2 h-2 bg-af-pink rounded-full"></span>
+                        <span class="text-sm text-gray-300 group-hover:text-white flex-1">release/v2.0</span>
+                        <span class="text-xs text-gray-600">12 behind</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Worktrees Section - NEW -->
+            <div class="border-b border-af-border">
+                <div class="flex items-center justify-between p-3 bg-af-card/50">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-af-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-200">Worktrees</span>
+                    </div>
+                    <span class="text-xs px-1.5 py-0.5 bg-af-cyan/20 text-af-cyan rounded">3 active</span>
+                </div>
+                <div class="p-3 space-y-2">
+                    <!-- Active Worktree -->
+                    <div class="bg-af-card rounded-lg p-2 border border-af-border hover:border-af-cyan/50 cursor-pointer transition">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-white">gallery-ui</span>
+                            <span class="text-xs px-1.5 py-0.5 bg-af-green/20 text-af-green rounded">active</span>
+                        </div>
+                        <div class="text-xs text-gray-500">feature/gallery-ui • /worktrees/gallery</div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-xs text-af-purple">Agent: UI Designer</span>
+                            <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+                            <span class="text-xs text-gray-500">Modified 2m ago</span>
+                        </div>
+                    </div>
+                    <!-- Worktree 2 -->
+                    <div class="bg-af-card rounded-lg p-2 border border-af-border hover:border-af-cyan/50 cursor-pointer transition">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-white">auth-system</span>
+                            <span class="text-xs px-1.5 py-0.5 bg-af-orange/20 text-af-orange rounded">paused</span>
+                        </div>
+                        <div class="text-xs text-gray-500">feature/auth-system • /worktrees/auth</div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-xs text-af-purple">Agent: Fullstack Dev</span>
+                            <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+                            <span class="text-xs text-gray-500">Modified 15m ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Tree (existing) -->
+            <div class="flex-1 overflow-y-auto scrollbar-thin">
+                <div class="p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs text-gray-500 uppercase tracking-wider">Files</span>
+                    </div>
+                    <div class="space-y-0.5 text-sm">
+                        <div class="flex items-center gap-2 px-2 py-1 text-gray-400 hover:bg-af-card rounded cursor-pointer">
+                            <svg class="w-4 h-4 text-af-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                            </svg>
+                            <span>src</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2 py-1 ml-4 text-gray-400 hover:bg-af-card rounded cursor-pointer">
+                            <svg class="w-4 h-4 text-af-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                            </svg>
+                            <span>components</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2 py-1 ml-8 text-gray-400 hover:bg-af-card rounded cursor-pointer">
+                            <svg class="w-4 h-4 text-af-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Gallery.jsx</span>
+                            <span class="ml-auto text-xs text-af-green">M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Projects -->
+            <div class="border-t border-af-border p-3">
+                <span class="text-xs text-gray-500 uppercase tracking-wider">Other Projects</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col">
+            <!-- Tabs -->
+            <div class="h-10 bg-af-darker border-b border-af-border flex items-center px-4 gap-1">
+                <button class="px-3 py-1.5 text-sm text-white bg-af-card rounded-t border-t border-x border-af-border -mb-px">Activity</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Planning</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Kanban</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Editor</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Viewer</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Agents</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Skills</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Guard Rails</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">MCP</button>
+                <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Database</button>
+                <!-- New Git Tab -->
+                <button class="px-3 py-1.5 text-sm text-af-purple hover:text-white flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Git
+                </button>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🤖</span>
+                        <div>
+                            <h2 class="text-lg font-semibold">Live Activity Pulse</h2>
+                            <p class="text-sm text-gray-500">Activity Feed • Agents working on feature/gallery-ui</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1 text-xs bg-af-card border border-af-border rounded hover:bg-af-border transition">Response</button>
+                        <button class="px-3 py-1 text-xs bg-af-card border border-af-border rounded hover:bg-af-border transition">Tool</button>
+                        <button class="px-3 py-1 text-xs bg-af-purple/20 text-af-purple border border-af-purple/30 rounded">Thinking</button>
+                        <button class="px-3 py-1 text-xs bg-af-card border border-af-border rounded hover:bg-af-border transition">Hook</button>
+                    </div>
+                </div>
+
+                <!-- Branch Context Banner -->
+                <div class="bg-gradient-to-r from-af-purple/20 to-af-cyan/20 border border-af-purple/30 rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-af-purple/20 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-af-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium">Working on: feature/gallery-ui</div>
+                                <div class="text-sm text-gray-400">Worktree: /worktrees/gallery • 3 files modified • 2 commits ahead of main</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-3 py-1.5 text-sm bg-af-card border border-af-border rounded-lg hover:bg-af-border transition">
+                                View Diff
+                            </button>
+                            <button class="px-3 py-1.5 text-sm bg-af-green/20 text-af-green border border-af-green/30 rounded-lg hover:bg-af-green/30 transition">
+                                Create PR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Items -->
+                <div class="space-y-3">
+                    <div class="bg-af-card rounded-lg p-4 border border-af-border">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-af-purple/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-af-purple text-sm">UI</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium">UI Designer</span>
+                                    <span class="text-xs text-gray-500">• Just now</span>
+                                    <span class="text-xs px-1.5 py-0.5 bg-af-cyan/20 text-af-cyan rounded">feature/gallery-ui</span>
+                                </div>
+                                <p class="text-sm text-gray-300">Creating responsive photo grid component with masonry layout...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-af-card rounded-lg p-4 border border-af-border">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-af-green/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-af-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium">Git Commit</span>
+                                    <span class="text-xs text-gray-500">• 2 minutes ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 font-mono">"feat: Add Gallery component base structure"</p>
+                                <p class="text-xs text-gray-500 mt-1">3 files changed • +147 -23</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Input -->
+            <div class="border-t border-af-border p-4 bg-af-darker">
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 relative">
+                        <input type="text"
+                               placeholder="Tell the orchestrator what to do..."
+                               class="w-full bg-af-card border border-af-border rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-af-purple transition">
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">Ctrl+K</div>
+                    </div>
+                    <button class="px-4 py-3 bg-af-card border border-af-border rounded-lg text-sm text-gray-400 hover:text-white transition">Pause</button>
+                    <button class="px-4 py-3 bg-af-card border border-af-border rounded-lg text-sm text-gray-400 hover:text-white transition">Stop</button>
+                    <button class="px-4 py-3 bg-af-purple hover:bg-af-purple/80 rounded-lg text-sm font-medium transition">Execute</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - Orchestrator -->
+        <aside class="w-80 bg-af-darker border-l border-af-border flex flex-col">
+            <div class="p-4 border-b border-af-border">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-af-cyan">⚡</span>
+                        <span class="font-medium">Orchestrator</span>
+                    </div>
+                    <span class="text-xs px-2 py-1 bg-af-green/20 text-af-green rounded">idle</span>
+                </div>
+            </div>
+
+            <!-- Git Status Quick View -->
+            <div class="p-4 border-b border-af-border bg-af-card/30">
+                <div class="text-xs text-gray-500 uppercase tracking-wider mb-3">Git Status</div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Branch</span>
+                        <span class="text-af-cyan">feature/gallery-ui</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Ahead/Behind</span>
+                        <span class="text-af-green">+2</span>
+                        <span class="text-af-orange">-0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Modified</span>
+                        <span class="text-white">3 files</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Staged</span>
+                        <span class="text-white">0 files</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 scrollbar-thin">
+                <div class="text-xs text-gray-500 uppercase tracking-wider mb-3">Agent Logs</div>
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="text-gray-500">12:31:45 <span class="text-af-purple">UI Designer</span> spawned</div>
+                    <div class="text-gray-500">12:31:46 <span class="text-af-cyan">Reading</span> Gallery.jsx</div>
+                    <div class="text-gray-500">12:31:48 <span class="text-af-green">Writing</span> Gallery.css</div>
+                    <div class="text-gray-500">12:31:52 <span class="text-af-purple">Commit</span> feat: Add Gallery component</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

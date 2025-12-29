@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentFlow - E2E Flow Timeline View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'af-dark': '#0a0a0f',
+                        'af-darker': '#05050a',
+                        'af-card': '#12121a',
+                        'af-border': '#1e1e2e',
+                        'af-purple': '#8b5cf6',
+                        'af-cyan': '#06b6d4',
+                        'af-green': '#10b981',
+                        'af-orange': '#f97316',
+                        'af-pink': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #12121a; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #2e2e3e; border-radius: 3px; }
+        .flow-connector { stroke-dasharray: 8 4; }
+        .wireframe-mini { transform: scale(0.6); transform-origin: top left; }
+    </style>
+</head>
+<body class="bg-af-dark text-gray-100 min-h-screen">
+    <!-- Top Navbar -->
+    <nav class="h-12 bg-af-darker border-b border-af-border flex items-center justify-between px-4">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-af-purple to-af-cyan rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">A</span>
+                </div>
+                <span class="font-semibold text-white">AGENTFLOW</span>
+            </div>
+            <span class="flex items-center gap-1 text-xs text-af-green">
+                <span class="w-2 h-2 bg-af-green rounded-full animate-pulse"></span>
+                connected
+            </span>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="bg-af-purple hover:bg-af-purple/80 px-4 py-1.5 rounded-lg text-sm font-medium transition">
+                + New Project
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex h-[calc(100vh-48px)]">
+        <!-- Left Sidebar -->
+        <aside class="w-72 bg-af-darker border-r border-af-border flex flex-col">
+            <div class="p-4 border-b border-af-border">
+                <h2 class="font-semibold mb-1">User Flows</h2>
+                <p class="text-xs text-gray-500">gotribe • E2E Journey Maps</p>
+            </div>
+
+            <!-- Flow List -->
+            <div class="flex-1 overflow-y-auto scrollbar-thin p-3">
+                <div class="space-y-2">
+                    <!-- Active Flow -->
+                    <div class="bg-af-purple/20 border border-af-purple/30 rounded-lg p-3 cursor-pointer">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-white">Booking Flow</span>
+                            <span class="text-xs px-2 py-0.5 bg-af-green/20 text-af-green rounded">8 screens</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Homepage → Experience → Booking → Confirmation</p>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-xs px-1.5 py-0.5 bg-af-purple/20 text-af-purple rounded">Mobile</span>
+                            <span class="text-xs px-1.5 py-0.5 bg-af-cyan/20 text-af-cyan rounded">Desktop</span>
+                            <span class="text-xs px-1.5 py-0.5 bg-af-orange/20 text-af-orange rounded">Web App</span>
+                        </div>
+                    </div>
+
+                    <!-- Other Flows -->
+                    <div class="bg-af-card border border-af-border rounded-lg p-3 cursor-pointer hover:border-af-purple/30 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-300">User Registration</span>
+                            <span class="text-xs px-2 py-0.5 bg-af-card text-gray-400 rounded">5 screens</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Landing → Sign Up → Verify → Profile → Dashboard</p>
+                    </div>
+
+                    <div class="bg-af-card border border-af-border rounded-lg p-3 cursor-pointer hover:border-af-purple/30 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-300">Admin Management</span>
+                            <span class="text-xs px-2 py-0.5 bg-af-card text-gray-400 rounded">6 screens</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Login → Dashboard → Create → Edit → Publish</p>
+                    </div>
+
+                    <div class="bg-af-card border border-af-border rounded-lg p-3 cursor-pointer hover:border-af-purple/30 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-300">Payment Flow</span>
+                            <span class="text-xs px-2 py-0.5 bg-af-card text-gray-400 rounded">4 screens</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Cart → Payment → Processing → Receipt</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Flow Button -->
+            <div class="p-3 border-t border-af-border">
+                <button class="w-full px-4 py-2 bg-af-card border border-af-border rounded-lg text-sm hover:bg-af-border transition flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Create New Flow
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="h-14 bg-af-darker border-b border-af-border flex items-center justify-between px-6">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <h1 class="text-lg font-semibold">Booking Flow - E2E Journey</h1>
+                        <p class="text-xs text-gray-500">8 screens • 3 device variants</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Device Filter -->
+                    <div class="flex items-center bg-af-card rounded-lg border border-af-border">
+                        <button class="px-3 py-1.5 text-sm bg-af-purple/20 text-af-purple rounded-l-lg border-r border-af-border">All</button>
+                        <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Mobile</button>
+                        <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Desktop</button>
+                        <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-r-lg">Web App</button>
+                    </div>
+                    <button class="px-4 py-1.5 bg-af-green/20 text-af-green border border-af-green/30 rounded-lg text-sm hover:bg-af-green/30 transition">
+                        Export Flow
+                    </button>
+                </div>
+            </header>
+
+            <!-- Flow Timeline Canvas -->
+            <div class="flex-1 overflow-auto scrollbar-thin bg-[#080810] p-8">
+                <!-- Flow Header Legend -->
+                <div class="flex items-center gap-6 mb-8">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-af-purple"></div>
+                        <span class="text-sm text-gray-400">Mobile</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-af-cyan"></div>
+                        <span class="text-sm text-gray-400">Desktop</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-af-orange"></div>
+                        <span class="text-sm text-gray-400">Web App</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-1 bg-af-green rounded"></div>
+                        <span class="text-sm text-gray-400">Happy Path</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-1 bg-gray-600 rounded" style="border: 1px dashed #666;"></div>
+                        <span class="text-sm text-gray-400">Alternative Path</span>
+                    </div>
+                </div>
+
+                <!-- Timeline Flow -->
+                <div class="relative">
+                    <!-- SVG Connectors -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 0;">
+                        <!-- Main flow line -->
+                        <path d="M 180 150 L 360 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 360 150 L 540 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 540 150 L 720 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 720 150 L 900 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 900 150 L 1080 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 1080 150 L 1260 150" stroke="#10b981" stroke-width="2" fill="none"/>
+                        <path d="M 1260 150 L 1440 150" stroke="#10b981" stroke-width="2" fill="none"/>
+
+                        <!-- Arrow heads -->
+                        <polygon points="355,145 365,150 355,155" fill="#10b981"/>
+                        <polygon points="535,145 545,150 535,155" fill="#10b981"/>
+                        <polygon points="715,145 725,150 715,155" fill="#10b981"/>
+                        <polygon points="895,145 905,150 895,155" fill="#10b981"/>
+                        <polygon points="1075,145 1085,150 1075,155" fill="#10b981"/>
+                        <polygon points="1255,145 1265,150 1255,155" fill="#10b981"/>
+                        <polygon points="1435,145 1445,150 1435,155" fill="#10b981"/>
+
+                        <!-- Alternative path from Experience Detail -->
+                        <path d="M 540 180 Q 540 250, 360 250 Q 180 250, 180 180" stroke="#666" stroke-width="2" stroke-dasharray="8 4" fill="none"/>
+                    </svg>
+
+                    <!-- Flow Steps -->
+                    <div class="flex gap-4 relative" style="z-index: 1;">
+                        <!-- Step 1: Homepage -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 1</span>
+                                <h3 class="font-medium">Homepage</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-border p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <!-- Mini Wireframe Stack -->
+                                <div class="relative h-48">
+                                    <!-- Mobile (front) -->
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30">
+                                        <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                        <div class="w-full h-10 bg-af-purple/20 rounded mb-1"></div>
+                                        <div class="w-full h-3 bg-white/10 rounded mb-1"></div>
+                                        <div class="flex gap-1">
+                                            <div class="flex-1 h-8 bg-af-dark rounded"></div>
+                                            <div class="flex-1 h-8 bg-af-dark rounded"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Desktop (back left) -->
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <!-- Web App (back right) -->
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Experience List -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 2</span>
+                                <h3 class="font-medium">Experience List</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-border p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30">
+                                        <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-card rounded"></div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Experience Detail -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 3</span>
+                                <h3 class="font-medium">Experience Detail</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-orange/50 p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30">
+                                        <div class="w-full h-12 bg-af-purple/20 rounded mb-1"></div>
+                                        <div class="w-full h-2 bg-white/20 rounded mb-1"></div>
+                                        <div class="w-full h-2 bg-white/10 rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-green/20 rounded mt-2"></div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange/50"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-orange">1 Pending</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Date Selection -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 4</span>
+                                <h3 class="font-medium">Date Selection</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-border p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30">
+                                        <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                        <div class="grid grid-cols-7 gap-px mb-1">
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                            <div class="h-2 bg-af-green/50 rounded"></div>
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                            <div class="h-2 bg-af-card rounded"></div>
+                                        </div>
+                                        <div class="w-full h-8 bg-af-card rounded"></div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Guest Info -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 5</span>
+                                <h3 class="font-medium">Guest Info</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-border p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30">
+                                        <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                        <div class="w-full h-4 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-4 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-4 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-purple/30 rounded mt-2"></div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 6: Payment -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 6</span>
+                                <h3 class="font-medium">Payment</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-orange/50 p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-orange p-1 z-30">
+                                        <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                        <div class="w-full h-8 bg-af-card rounded mb-1 flex items-center justify-center">
+                                            <span class="text-[6px] text-gray-500">💳</span>
+                                        </div>
+                                        <div class="w-full h-4 bg-af-card rounded mb-1"></div>
+                                        <div class="w-full h-6 bg-af-green/30 rounded mt-2"></div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple/50"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange/50"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-orange">2 Pending</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 7: Processing -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 7</span>
+                                <h3 class="font-medium">Processing</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-border p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-purple p-1 z-30 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 border-2 border-af-purple/50 border-t-af-purple rounded-full animate-spin mx-auto mb-2"></div>
+                                            <div class="w-12 h-2 bg-white/20 rounded mx-auto"></div>
+                                        </div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 8: Confirmation -->
+                        <div class="w-44 flex-shrink-0">
+                            <div class="text-center mb-3">
+                                <span class="text-xs text-gray-500">STEP 8</span>
+                                <h3 class="font-medium">Confirmation</h3>
+                            </div>
+                            <div class="bg-af-card rounded-xl border border-af-green/50 p-2 hover:border-af-purple/50 transition cursor-pointer">
+                                <div class="relative h-48">
+                                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-40 bg-af-dark rounded-lg border-2 border-af-green p-1 z-30">
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="w-10 h-10 bg-af-green/20 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                                    <span class="text-af-green text-lg">✓</span>
+                                                </div>
+                                                <div class="w-12 h-2 bg-white/20 rounded mx-auto mb-1"></div>
+                                                <div class="w-8 h-1 bg-white/10 rounded mx-auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="absolute top-2 left-0 w-16 h-10 bg-af-darker rounded border border-af-cyan/50 opacity-60 z-10"></div>
+                                    <div class="absolute top-2 right-0 w-16 h-10 bg-af-darker rounded border border-af-orange/50 opacity-60 z-10"></div>
+                                </div>
+                                <div class="flex items-center justify-center gap-1 mt-2">
+                                    <span class="w-2 h-2 rounded-full bg-af-purple"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-cyan"></span>
+                                    <span class="w-2 h-2 rounded-full bg-af-orange"></span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="text-xs text-af-green">✓ All Approved</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Summary -->
+                    <div class="mt-8 bg-af-card rounded-xl border border-af-border p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold mb-1">Flow Summary</h3>
+                                <p class="text-sm text-gray-500">Booking Flow completion status</p>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-white">8</div>
+                                    <div class="text-xs text-gray-500">Total Screens</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-af-green">21</div>
+                                    <div class="text-xs text-gray-500">Approved</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-af-orange">3</div>
+                                    <div class="text-xs text-gray-500">Pending</div>
+                                </div>
+                                <div class="w-32">
+                                    <div class="flex items-center justify-between text-xs mb-1">
+                                        <span class="text-gray-500">Progress</span>
+                                        <span class="text-af-green">87%</span>
+                                    </div>
+                                    <div class="h-2 bg-af-dark rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-af-purple to-af-green rounded-full" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-2 bg-af-purple hover:bg-af-purple/80 rounded-lg text-sm font-medium transition">
+                                    Review Pending
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

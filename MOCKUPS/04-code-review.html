@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aigentflow - Code Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vsc-bg': '#1e1e1e',
+                        'vsc-sidebar': '#252526',
+                        'vsc-activitybar': '#333333',
+                        'vsc-editor': '#1e1e1e',
+                        'vsc-titlebar': '#3c3c3c',
+                        'vsc-statusbar': '#007acc',
+                        'vsc-border': '#3c3c3c',
+                        'vsc-active': '#094771',
+                        'vsc-hover': '#2a2d2e',
+                        'vsc-accent': '#007acc',
+                        'vsc-text': '#cccccc',
+                        'vsc-text-dim': '#858585',
+                        'vsc-green': '#4ec9b0',
+                        'vsc-blue': '#569cd6',
+                        'vsc-yellow': '#dcdcaa',
+                        'vsc-orange': '#ce9178',
+                        'vsc-purple': '#c586c0',
+                        'vsc-red': '#f14c4c',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .activity-icon { transition: all 0.1s; }
+        .activity-icon:hover { color: white; }
+        .activity-icon.active { color: white; border-left: 2px solid #007acc; }
+        .tree-item:hover { background: #2a2d2e; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
+        .code-line { font-family: 'Consolas', 'Monaco', monospace; }
+        .diff-add { background: rgba(78, 201, 176, 0.15); }
+        .diff-remove { background: rgba(241, 76, 76, 0.15); }
+    </style>
+</head>
+<body class="bg-vsc-bg text-vsc-text overflow-hidden">
+    <!-- Title Bar -->
+    <div class="h-8 bg-vsc-titlebar flex items-center px-4 text-sm border-b border-vsc-border">
+        <div class="flex items-center gap-4 flex-1">
+            <span class="text-vsc-text-dim">File</span>
+            <span class="text-vsc-text-dim">Edit</span>
+            <span class="text-vsc-text-dim">View</span>
+            <span class="text-vsc-text-dim">Agents</span>
+            <span class="text-vsc-text-dim">Run</span>
+            <span class="text-vsc-text-dim">Help</span>
+        </div>
+        <div class="flex-1 text-center text-vsc-text-dim">my-saas-app - Aigentflow</div>
+        <div class="flex-1 flex justify-end gap-3 text-vsc-text-dim items-center">
+            <span class="px-2 py-0.5 bg-vsc-accent/20 text-vsc-accent rounded text-xs">Code Review</span>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-32px)]">
+        <!-- Activity Bar -->
+        <div class="w-12 bg-vsc-activitybar flex flex-col items-center py-2 border-r border-vsc-border">
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 0h-9L7 1.5V6H2.5L1 7.5v15.07L2.5 24h12.07L16 22.57V18h4.7l1.3-1.43V4.5L17.5 0z"/></svg></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M15.25 0a8.25 8.25 0 0 0-6.18 13.72L1 22.88l1.12 1.12z"/></svg></div>
+            <div class="activity-icon active w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer relative"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.007 8.222A3.738 3.738 0 0 0 17.5 5.5z"/></svg><span class="absolute top-1 right-1 w-4 h-4 bg-vsc-accent rounded-full text-xs flex items-center justify-center text-white">8</span></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1v3h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2v-3h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2z"/></svg></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div>
+            <div class="flex-1"></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94z"/></svg></div>
+        </div>
+
+        <!-- Left Sidebar -->
+        <div class="w-56 bg-vsc-sidebar flex flex-col border-r border-vsc-border">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">Source Control</div>
+
+            <!-- Git Branches -->
+            <div class="border-b border-vsc-border">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>Git Branches</div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer bg-vsc-active">
+                        <span class="w-2 h-2 rounded-full bg-vsc-accent mr-2"></span>
+                        <span class="truncate">feature/user-auth</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Worktrees -->
+            <div class="border-b border-vsc-border">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>Worktrees</div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer bg-vsc-active"><span class="truncate">user-auth</span></div>
+                </div>
+            </div>
+
+            <!-- Changed Files -->
+            <div class="flex-1 overflow-auto">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                    Changed Files
+                    <span class="ml-auto px-1.5 py-0.5 bg-vsc-accent/20 text-vsc-accent rounded text-xs">8</span>
+                </div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer bg-vsc-active">
+                        <svg class="w-4 h-4 mr-2 text-vsc-green" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                        <span class="truncate">LoginForm.tsx</span>
+                        <span class="ml-auto text-vsc-green text-xs">+120</span>
+                    </div>
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-green" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                        <span class="truncate">LoginForm.test.tsx</span>
+                        <span class="ml-auto text-vsc-green text-xs">+85</span>
+                    </div>
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-yellow" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                        <span class="truncate">useAuth.ts</span>
+                        <span class="ml-auto"><span class="text-vsc-green">+67</span> <span class="text-vsc-red">-8</span></span>
+                    </div>
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-green" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.89 2-2V8l-6-6z"/></svg>
+                        <span class="truncate">auth.ts</span>
+                        <span class="ml-auto text-vsc-green text-xs">+45</span>
+                    </div>
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-yellow" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.89 2-2V8l-6-6z"/></svg>
+                        <span class="truncate">login.css</span>
+                        <span class="ml-auto"><span class="text-vsc-green">+25</span> <span class="text-vsc-red">-2</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="border-t border-vsc-border py-2">
+                <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer bg-vsc-active">
+                    <span class="w-2 h-2 rounded-full bg-vsc-accent mr-2"></span>
+                    <span>my-saas-app</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Code Review -->
+        <div class="flex-1 flex flex-col">
+            <!-- Editor Tabs -->
+            <div class="h-9 bg-vsc-titlebar flex items-center border-b border-vsc-border">
+                <div class="tab flex items-center px-3 h-full text-sm border-r border-vsc-border bg-vsc-editor border-t border-t-vsc-accent">
+                    <svg class="w-4 h-4 mr-2 text-vsc-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.89 2-2V8l-6-6z"/></svg>
+                    <span>Code Review: feature/user-auth</span>
+                </div>
+            </div>
+
+            <!-- Review Summary -->
+            <div class="bg-vsc-sidebar border-b border-vsc-border p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <div class="text-sm text-vsc-text-dim">Files Changed</div>
+                            <div class="text-xl font-semibold">8</div>
+                        </div>
+                        <div class="w-px h-10 bg-vsc-border"></div>
+                        <div>
+                            <div class="text-sm text-vsc-text-dim">Additions</div>
+                            <div class="text-xl font-semibold text-vsc-green">+342</div>
+                        </div>
+                        <div class="w-px h-10 bg-vsc-border"></div>
+                        <div>
+                            <div class="text-sm text-vsc-text-dim">Deletions</div>
+                            <div class="text-xl font-semibold text-vsc-red">-12</div>
+                        </div>
+                        <div class="w-px h-10 bg-vsc-border"></div>
+                        <div>
+                            <div class="text-sm text-vsc-text-dim">Test Coverage</div>
+                            <div class="text-xl font-semibold text-vsc-green">94%</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="px-4 py-2 bg-vsc-hover border border-vsc-border rounded text-sm hover:bg-vsc-border">Request Changes</button>
+                        <button class="px-4 py-2 bg-vsc-green text-white rounded text-sm hover:bg-vsc-green/80">Approve</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Findings -->
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Code Diff -->
+                <div class="flex-1 overflow-auto">
+                    <!-- File Header -->
+                    <div class="sticky top-0 bg-vsc-titlebar border-b border-vsc-border px-4 py-2 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.89 2-2V8l-6-6z"/></svg>
+                            <span class="text-sm">src/components/LoginForm.tsx</span>
+                            <span class="text-xs text-vsc-green">+120 lines</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-vsc-text-dim">
+                            <button class="px-2 py-1 hover:bg-vsc-hover rounded">Unified</button>
+                            <button class="px-2 py-1 bg-vsc-hover rounded">Split</button>
+                        </div>
+                    </div>
+
+                    <!-- Code Lines -->
+                    <div class="font-mono text-sm">
+                        <div class="flex code-line py-0.5 px-4 text-vsc-text-dim">
+                            <span class="w-12 text-right pr-4 select-none">1</span>
+                            <span class="w-12 text-right pr-4 select-none">1</span>
+                            <span class="flex-1 text-vsc-purple">import</span><span class="text-vsc-text"> React, { useState } </span><span class="text-vsc-purple">from</span><span class="text-vsc-orange"> 'react'</span><span class="text-vsc-text">;</span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">2</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 text-vsc-purple">import</span><span class="text-vsc-text"> { useAuth } </span><span class="text-vsc-purple">from</span><span class="text-vsc-orange"> '../hooks/useAuth'</span><span class="text-vsc-text">;</span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">3</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 text-vsc-purple">import</span><span class="text-vsc-text"> { validateEmail } </span><span class="text-vsc-purple">from</span><span class="text-vsc-orange"> '../utils/validation'</span><span class="text-vsc-text">;</span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim">2</span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim">4</span>
+                            <span class="flex-1"></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">5</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 text-vsc-purple">interface</span><span class="text-vsc-green"> LoginFormProps</span><span class="text-vsc-text"> {</span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">6</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-blue">onSuccess</span><span class="text-vsc-text">?: () => </span><span class="text-vsc-blue">void</span><span class="text-vsc-text">;</span></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">7</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-blue">redirectUrl</span><span class="text-vsc-text">?: </span><span class="text-vsc-blue">string</span><span class="text-vsc-text">;</span></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">8</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 text-vsc-text">}</span>
+                        </div>
+
+                        <!-- Review Comment Inline -->
+                        <div class="bg-vsc-yellow/10 border-l-2 border-vsc-yellow mx-4 my-2 rounded">
+                            <div class="flex items-center gap-2 px-3 py-2 border-b border-vsc-yellow/20">
+                                <div class="w-6 h-6 rounded-full bg-vsc-purple/20 flex items-center justify-center text-xs text-vsc-purple">R</div>
+                                <span class="text-sm font-medium">Reviewer Agent</span>
+                                <span class="text-xs text-vsc-text-dim">suggestion</span>
+                            </div>
+                            <div class="p-3 text-sm">
+                                <p class="text-vsc-text-dim mb-2">Consider memoizing the callback props to prevent unnecessary re-renders:</p>
+                                <pre class="bg-vsc-bg rounded p-2 text-xs overflow-x-auto"><code class="text-vsc-green">const memoizedOnSuccess = useCallback(onSuccess, []);</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">10</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 text-vsc-purple">export const</span><span class="text-vsc-yellow"> LoginForm</span><span class="text-vsc-text">: React.FC</span><span class="text-vsc-text">&lt;</span><span class="text-vsc-green">LoginFormProps</span><span class="text-vsc-text">&gt; = ({ onSuccess, redirectUrl }) => {</span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">11</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-purple">const</span><span class="text-vsc-text"> [email, setEmail] = </span><span class="text-vsc-yellow">useState</span><span class="text-vsc-text">('');</span></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">12</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-purple">const</span><span class="text-vsc-text"> [password, setPassword] = </span><span class="text-vsc-yellow">useState</span><span class="text-vsc-text">('');</span></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">13</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-purple">const</span><span class="text-vsc-text"> [error, setError] = </span><span class="text-vsc-yellow">useState</span><span class="text-vsc-text">&lt;</span><span class="text-vsc-blue">string</span><span class="text-vsc-text"> | </span><span class="text-vsc-blue">null</span><span class="text-vsc-text">&gt;(</span><span class="text-vsc-blue">null</span><span class="text-vsc-text">);</span></span>
+                        </div>
+                        <div class="flex code-line py-0.5 px-4 diff-add">
+                            <span class="w-12 text-right pr-4 select-none text-vsc-text-dim"></span>
+                            <span class="w-12 text-right pr-4 select-none text-vsc-green">14</span>
+                            <span class="text-vsc-green">+</span>
+                            <span class="flex-1 pl-4"><span class="text-vsc-purple">const</span><span class="text-vsc-text"> { login, isLoading } = </span><span class="text-vsc-yellow">useAuth</span><span class="text-vsc-text">();</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Findings Panel -->
+                <div class="w-80 border-l border-vsc-border bg-vsc-sidebar overflow-auto">
+                    <div class="p-3 border-b border-vsc-border">
+                        <div class="text-xs text-vsc-text-dim uppercase mb-2">Review Findings</div>
+                    </div>
+
+                    <!-- Warnings -->
+                    <div class="p-3 border-b border-vsc-border">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-4 h-4 text-vsc-yellow" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            <span class="text-sm text-vsc-yellow">Warnings (2)</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="p-2 bg-vsc-yellow/10 rounded text-xs">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-vsc-text">useAuth.ts:45</span>
+                                </div>
+                                <div class="text-vsc-text-dim">Consider memoizing callback</div>
+                            </div>
+                            <div class="p-2 bg-vsc-yellow/10 rounded text-xs">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-vsc-text">useAuth.ts:67</span>
+                                </div>
+                                <div class="text-vsc-text-dim">Missing error boundary</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggestions -->
+                    <div class="p-3 border-b border-vsc-border">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-4 h-4 text-vsc-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                            <span class="text-sm text-vsc-blue">Suggestions (3)</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="p-2 bg-vsc-blue/10 rounded text-xs">
+                                <div class="text-vsc-text mb-1">LoginForm.tsx:23</div>
+                                <div class="text-vsc-text-dim">Extract validation logic to separate function</div>
+                            </div>
+                            <div class="p-2 bg-vsc-blue/10 rounded text-xs">
+                                <div class="text-vsc-text mb-1">auth.ts:12</div>
+                                <div class="text-vsc-text-dim">Consider retry logic for API calls</div>
+                            </div>
+                            <div class="p-2 bg-vsc-blue/10 rounded text-xs">
+                                <div class="text-vsc-text mb-1">login.css:8</div>
+                                <div class="text-vsc-text-dim">Use design token instead of hardcoded value</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Metrics -->
+                    <div class="p-3">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-4 h-4 text-vsc-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span class="text-sm text-vsc-green">Quality Metrics</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="text-vsc-text-dim">Test Coverage</span>
+                                <span class="text-vsc-green">94%</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-vsc-text-dim">Complexity</span>
+                                <span class="text-vsc-green">Low</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-vsc-text-dim">Security</span>
+                                <span class="text-vsc-green">No issues</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-vsc-text-dim">Type Safety</span>
+                                <span class="text-vsc-green">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Orchestrator -->
+        <div class="w-56 bg-vsc-sidebar border-l border-vsc-border flex flex-col">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">
+                Orchestrator
+                <span class="ml-auto px-1.5 py-0.5 bg-vsc-accent/20 text-vsc-accent rounded text-xs normal-case">review</span>
+            </div>
+
+            <!-- Git Status -->
+            <div class="p-3 border-b border-vsc-border">
+                <div class="text-xs text-vsc-text-dim uppercase mb-2">Git Status</div>
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Branch</span><span class="text-vsc-accent truncate">feature/user-auth</span></div>
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Worktree</span><span>user-auth</span></div>
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Commits</span><span>5 ahead</span></div>
+                </div>
+            </div>
+
+            <!-- Review Status -->
+            <div class="p-3 border-b border-vsc-border">
+                <div class="text-xs text-vsc-text-dim uppercase mb-2">Review Status</div>
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Warnings</span><span class="text-vsc-yellow">2</span></div>
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Suggestions</span><span class="text-vsc-blue">3</span></div>
+                    <div class="flex justify-between"><span class="text-vsc-text-dim">Blockers</span><span class="text-vsc-green">0</span></div>
+                </div>
+            </div>
+
+            <div class="flex-1"></div>
+
+            <!-- Actions -->
+            <div class="p-3 border-t border-vsc-border space-y-2">
+                <button class="w-full px-3 py-2 bg-vsc-green text-white text-xs rounded hover:bg-vsc-green/80">Approve & Merge</button>
+                <button class="w-full px-3 py-2 bg-vsc-hover border border-vsc-border text-xs rounded hover:bg-vsc-border">Request Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="h-6 bg-vsc-statusbar flex items-center px-3 text-xs text-white">
+        <div class="flex items-center gap-3">
+            <span>feature/user-auth</span>
+            <span>+5 ↓0</span>
+        </div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-4">
+            <span>Review: 2 warnings, 3 suggestions</span>
+            <span>Coverage: 94%</span>
+        </div>
+    </div>
+</body>
+</html>

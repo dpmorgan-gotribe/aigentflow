@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Panel - Tree with Visual Connectors Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'af-dark': '#0a0a0f',
+                        'af-darker': '#06060a',
+                        'af-card': '#12121a',
+                        'af-border': '#1e1e2e',
+                        'af-purple': '#8b5cf6',
+                        'af-cyan': '#06b6d4',
+                        'af-green': '#10b981',
+                        'af-orange': '#f59e0b',
+                        'af-pink': '#ec4899',
+                        'af-red': '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tree-node { transition: all 0.2s ease; }
+        .tree-node:hover { background: rgba(139, 92, 246, 0.1); }
+        .tree-connector { stroke-dasharray: 0; transition: stroke-dasharray 0.3s; }
+        .tree-node:hover ~ svg .tree-connector { stroke-dasharray: 5, 5; }
+        .expand-icon { transition: transform 0.2s; }
+        .collapsed .expand-icon { transform: rotate(-90deg); }
+    </style>
+</head>
+<body class="bg-af-dark min-h-screen text-white">
+    <!-- Header -->
+    <div class="border-b border-af-border bg-af-darker px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <h1 class="text-xl font-bold">AgentFlow</h1>
+                <span class="text-gray-500">|</span>
+                <span class="text-af-purple font-medium">Architecture Panel</span>
+                <span class="text-xs px-2 py-0.5 bg-af-green/20 text-af-green rounded">Tree View</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 text-sm text-gray-400">
+                    <span>Group by:</span>
+                    <select class="bg-af-card border border-af-border rounded px-2 py-1 text-sm">
+                        <option>Layer</option>
+                        <option>Domain</option>
+                        <option>File Type</option>
+                    </select>
+                </div>
+                <button class="px-2 py-1 text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                    </svg>
+                </button>
+                <button class="px-3 py-1.5 bg-af-purple/20 text-af-purple border border-af-purple/30 rounded-lg text-sm">
+                    Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="px-6 py-3 bg-af-darker/50 border-b border-af-border">
+        <div class="relative max-w-md">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" placeholder="Search components, files, endpoints..." class="w-full bg-af-card border border-af-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-af-purple">
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-130px)]">
+        <!-- Tree Panel -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-6">
+                <!-- Root Node -->
+                <div class="select-none">
+                    <!-- AgentFlow System Root -->
+                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                        <div class="w-6 h-6 rounded bg-af-purple/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-af-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                        </div>
+                        <span class="font-bold">AgentFlow System</span>
+                        <span class="text-xs text-gray-500 ml-2">4 layers, 28 components</span>
+                    </div>
+
+                    <!-- Tree Children with Connectors -->
+                    <div class="ml-4 relative">
+                        <!-- Vertical connector line -->
+                        <div class="absolute left-3 top-0 bottom-0 w-px bg-af-border"></div>
+
+                        <!-- Frontend Layer -->
+                        <div class="relative pl-8 py-1">
+                            <div class="absolute left-3 top-4 w-5 h-px bg-af-border"></div>
+                            <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                                <div class="w-5 h-5 rounded bg-af-cyan/20 flex items-center justify-center">
+                                    <div class="w-2 h-2 rounded-full bg-af-cyan"></div>
+                                </div>
+                                <span class="font-medium text-af-cyan">Frontend</span>
+                                <span class="text-xs px-2 py-0.5 bg-af-cyan/10 text-af-cyan rounded">React</span>
+                            </div>
+
+                            <!-- Frontend Children -->
+                            <div class="ml-4 relative">
+                                <div class="absolute left-3 top-0 bottom-0 w-px bg-af-border/50"></div>
+
+                                <!-- Components -->
+                                <div class="relative pl-8 py-1">
+                                    <div class="absolute left-3 top-4 w-5 h-px bg-af-border/50"></div>
+                                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        <span class="text-gray-300">components/</span>
+                                        <span class="text-xs text-gray-500">24 files</span>
+                                    </div>
+
+                                    <!-- Component Files -->
+                                    <div class="ml-4 relative">
+                                        <div class="absolute left-3 top-0 bottom-0 w-px bg-af-border/30"></div>
+                                        <div class="relative pl-8 py-0.5">
+                                            <div class="absolute left-3 top-3 w-5 h-px bg-af-border/30"></div>
+                                            <div class="tree-node flex items-center gap-2 p-1.5 rounded cursor-pointer text-sm">
+                                                <svg class="w-4 h-4 text-af-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span class="text-gray-400">DashboardView.jsx</span>
+                                                <span class="text-xs text-gray-600">→ agentStore, projectStore</span>
+                                            </div>
+                                        </div>
+                                        <div class="relative pl-8 py-0.5">
+                                            <div class="absolute left-3 top-3 w-5 h-px bg-af-border/30"></div>
+                                            <div class="tree-node flex items-center gap-2 p-1.5 rounded cursor-pointer text-sm">
+                                                <svg class="w-4 h-4 text-af-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span class="text-gray-400">AgentsPanel.jsx</span>
+                                                <span class="text-xs text-gray-600">→ agentStore, useWebSocket</span>
+                                            </div>
+                                        </div>
+                                        <div class="relative pl-8 py-0.5">
+                                            <div class="absolute left-3 top-3 w-5 h-px bg-af-border/30"></div>
+                                            <div class="tree-node flex items-center gap-2 p-1.5 rounded cursor-pointer text-sm text-gray-500 italic">
+                                                <span>+ 22 more files...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stores -->
+                                <div class="relative pl-8 py-1">
+                                    <div class="absolute left-3 top-4 w-5 h-px bg-af-border/50"></div>
+                                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        <span class="text-gray-300">stores/</span>
+                                        <span class="text-xs px-1.5 py-0.5 bg-af-orange/10 text-af-orange rounded">Zustand</span>
+                                    </div>
+
+                                    <div class="ml-4 relative">
+                                        <div class="absolute left-3 top-0 bottom-0 w-px bg-af-border/30"></div>
+                                        <div class="relative pl-8 py-0.5">
+                                            <div class="absolute left-3 top-3 w-5 h-px bg-af-border/30"></div>
+                                            <div class="tree-node flex items-center gap-2 p-1.5 rounded cursor-pointer text-sm bg-af-purple/10 border border-af-purple/30">
+                                                <svg class="w-4 h-4 text-af-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span class="text-af-orange">projectStore.js</span>
+                                                <span class="text-xs text-gray-500">← Selected</span>
+                                            </div>
+                                        </div>
+                                        <div class="relative pl-8 py-0.5">
+                                            <div class="absolute left-3 top-3 w-5 h-px bg-af-border/30"></div>
+                                            <div class="tree-node flex items-center gap-2 p-1.5 rounded cursor-pointer text-sm">
+                                                <svg class="w-4 h-4 text-af-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span class="text-gray-400">agentStore.js</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Backend Layer -->
+                        <div class="relative pl-8 py-1">
+                            <div class="absolute left-3 top-4 w-5 h-px bg-af-border"></div>
+                            <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                                <div class="w-5 h-5 rounded bg-af-purple/20 flex items-center justify-center">
+                                    <div class="w-2 h-2 rounded-full bg-af-purple"></div>
+                                </div>
+                                <span class="font-medium text-af-purple">Backend</span>
+                                <span class="text-xs px-2 py-0.5 bg-af-purple/10 text-af-purple rounded">FastAPI</span>
+                            </div>
+
+                            <div class="ml-4 relative">
+                                <div class="absolute left-3 top-0 bottom-0 w-px bg-af-border/50"></div>
+
+                                <!-- Routes -->
+                                <div class="relative pl-8 py-1">
+                                    <div class="absolute left-3 top-4 w-5 h-px bg-af-border/50"></div>
+                                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        <span class="text-gray-300">routes/</span>
+                                        <span class="text-xs text-gray-500">7 files</span>
+                                    </div>
+                                </div>
+
+                                <!-- Services -->
+                                <div class="relative pl-8 py-1">
+                                    <div class="absolute left-3 top-4 w-5 h-px bg-af-border/50"></div>
+                                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        <span class="text-gray-300">services/</span>
+                                        <span class="text-xs text-gray-500">8 files</span>
+                                    </div>
+                                </div>
+
+                                <!-- Agents -->
+                                <div class="relative pl-8 py-1">
+                                    <div class="absolute left-3 top-4 w-5 h-px bg-af-border/50"></div>
+                                    <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                        <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        <span class="text-gray-300">agents/</span>
+                                        <span class="text-xs px-1.5 py-0.5 bg-af-pink/10 text-af-pink rounded">AI</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Database Layer -->
+                        <div class="relative pl-8 py-1">
+                            <div class="absolute left-3 top-4 w-5 h-px bg-af-border"></div>
+                            <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                                <div class="w-5 h-5 rounded bg-af-green/20 flex items-center justify-center">
+                                    <div class="w-2 h-2 rounded-full bg-af-green"></div>
+                                </div>
+                                <span class="font-medium text-af-green">Database</span>
+                                <span class="text-xs px-2 py-0.5 bg-af-green/10 text-af-green rounded">SQLite</span>
+                            </div>
+                        </div>
+
+                        <!-- External -->
+                        <div class="relative pl-8 py-1">
+                            <div class="absolute left-3 top-4 w-5 h-px bg-af-border"></div>
+                            <div class="tree-node flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+                                <svg class="w-4 h-4 text-gray-400 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                                <div class="w-5 h-5 rounded bg-gray-600/20 flex items-center justify-center">
+                                    <div class="w-2 h-2 rounded-full bg-gray-500"></div>
+                                </div>
+                                <span class="font-medium text-gray-400">External</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dependency Graph Panel -->
+        <div class="w-96 border-l border-af-border bg-af-darker flex flex-col">
+            <div class="p-4 border-b border-af-border">
+                <h3 class="font-semibold">Dependencies</h3>
+                <p class="text-xs text-gray-500 mt-1">projectStore.js</p>
+            </div>
+
+            <!-- Visual Dependency Graph -->
+            <div class="flex-1 p-4 overflow-auto">
+                <div class="relative h-80">
+                    <svg class="absolute inset-0 w-full h-full">
+                        <!-- Connection lines -->
+                        <line x1="170" y1="80" x2="170" y2="140" stroke="#8b5cf6" stroke-width="2"/>
+                        <line x1="170" y1="180" x2="100" y2="220" stroke="#06b6d4" stroke-width="2"/>
+                        <line x1="170" y1="180" x2="240" y2="220" stroke="#06b6d4" stroke-width="2"/>
+                        <line x1="170" y1="180" x2="170" y2="280" stroke="#10b981" stroke-width="2"/>
+                    </svg>
+
+                    <!-- Upstream (API) -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-4 w-40 bg-af-purple/20 border border-af-purple/50 rounded-lg p-3 text-center">
+                        <div class="text-xs text-gray-500">API</div>
+                        <div class="text-sm text-af-purple font-medium">/api/projects</div>
+                    </div>
+
+                    <!-- Current Node -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-32 w-44 bg-af-orange/20 border-2 border-af-orange rounded-lg p-3 text-center">
+                        <div class="text-xs text-gray-500">STORE</div>
+                        <div class="text-sm text-af-orange font-bold">projectStore.js</div>
+                        <div class="text-xs text-gray-400 mt-1">Zustand state management</div>
+                    </div>
+
+                    <!-- Downstream Components -->
+                    <div class="absolute left-4 top-52 w-32 bg-af-cyan/20 border border-af-cyan/50 rounded-lg p-2 text-center">
+                        <div class="text-xs text-af-cyan font-medium">ProjectViewer</div>
+                        <div class="text-xs text-gray-500">.jsx</div>
+                    </div>
+
+                    <div class="absolute right-4 top-52 w-32 bg-af-cyan/20 border border-af-cyan/50 rounded-lg p-2 text-center">
+                        <div class="text-xs text-af-cyan font-medium">NewProjectModal</div>
+                        <div class="text-xs text-gray-500">.jsx</div>
+                    </div>
+
+                    <!-- Database -->
+                    <div class="absolute left-1/2 -translate-x-1/2 bottom-4 w-36 bg-af-green/20 border border-af-green/50 rounded-lg p-2 text-center">
+                        <div class="text-xs text-gray-500">TABLE</div>
+                        <div class="text-xs text-af-green font-medium">projects</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="p-4 border-t border-af-border bg-af-card">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-medium">Impact Analysis</span>
+                    <span class="text-xs px-2 py-0.5 bg-af-orange/20 text-af-orange rounded">Medium Risk</span>
+                </div>
+                <div class="text-xs text-gray-400 space-y-2">
+                    <div class="flex items-start gap-2">
+                        <span class="text-af-orange">!</span>
+                        <span>Changes affect 2 UI components</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-af-purple">→</span>
+                        <span>State shape changes require API update</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-af-green">→</span>
+                        <span>Schema changes require migration</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 space-y-2">
+                    <button class="w-full py-2 bg-af-purple/20 text-af-purple border border-af-purple/30 rounded-lg text-sm hover:bg-af-purple/30">
+                        Copy as Agent Context
+                    </button>
+                    <button class="w-full py-2 bg-af-card text-gray-300 border border-af-border rounded-lg text-sm hover:bg-af-border">
+                        View Full Impact Graph
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

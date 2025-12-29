@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentFlow - Device Preview Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'af-dark': '#0a0a0f',
+                        'af-darker': '#05050a',
+                        'af-card': '#12121a',
+                        'af-border': '#1e1e2e',
+                        'af-purple': '#8b5cf6',
+                        'af-cyan': '#06b6d4',
+                        'af-green': '#10b981',
+                        'af-orange': '#f97316',
+                        'af-pink': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #12121a; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #2e2e3e; border-radius: 3px; }
+        .matrix-cell:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-af-dark text-gray-100 min-h-screen">
+    <!-- Top Navbar -->
+    <nav class="h-12 bg-af-darker border-b border-af-border flex items-center justify-between px-4">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-af-purple to-af-cyan rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">A</span>
+                </div>
+                <span class="font-semibold text-white">AGENTFLOW</span>
+            </div>
+            <span class="flex items-center gap-1 text-xs text-af-green">
+                <span class="w-2 h-2 bg-af-green rounded-full animate-pulse"></span>
+                connected
+            </span>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="bg-af-purple hover:bg-af-purple/80 px-4 py-1.5 rounded-lg text-sm font-medium transition">
+                + New Project
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex h-[calc(100vh-48px)]">
+        <!-- Main Content - Full Width Matrix -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="h-14 bg-af-darker border-b border-af-border flex items-center justify-between px-6">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <h1 class="text-lg font-semibold">Wireframe Matrix</h1>
+                        <p class="text-xs text-gray-500">gotribe • All Screens × All Devices</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-af-card rounded-lg border border-af-border">
+                        <button class="px-3 py-1.5 text-sm bg-af-purple/20 text-af-purple rounded-l-lg">All</button>
+                        <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white">Pending</button>
+                        <button class="px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-r-lg">Approved</button>
+                    </div>
+                    <button class="px-3 py-1.5 bg-af-card border border-af-border rounded-lg text-sm hover:bg-af-border transition flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        Export All
+                    </button>
+                    <button class="px-4 py-1.5 bg-af-green/20 text-af-green border border-af-green/30 rounded-lg text-sm hover:bg-af-green/30 transition">
+                        Approve All Pending
+                    </button>
+                </div>
+            </header>
+
+            <!-- Summary Stats -->
+            <div class="px-6 py-4 border-b border-af-border bg-af-darker/50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-8">
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500">Screens:</span>
+                            <span class="text-white font-semibold">6</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500">Devices:</span>
+                            <span class="text-white font-semibold">4</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500">Total Wireframes:</span>
+                            <span class="text-white font-semibold">24</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-af-green">✓ Approved:</span>
+                            <span class="text-af-green font-semibold">18</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-af-orange">⏳ Pending:</span>
+                            <span class="text-af-orange font-semibold">6</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Progress:</span>
+                        <div class="w-32 h-2 bg-af-dark rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-af-purple to-af-green rounded-full" style="width: 75%"></div>
+                        </div>
+                        <span class="text-af-green font-semibold">75%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matrix Grid -->
+            <div class="flex-1 overflow-auto scrollbar-thin bg-[#080810]">
+                <div class="p-6">
+                    <!-- Matrix Table -->
+                    <div class="min-w-max">
+                        <!-- Header Row - Device Types -->
+                        <div class="flex sticky top-0 z-10 bg-[#080810] pb-4">
+                            <div class="w-48 flex-shrink-0"></div>
+                            <!-- Mobile Header -->
+                            <div class="w-36 flex-shrink-0 px-2">
+                                <div class="bg-af-purple/20 border border-af-purple/30 rounded-lg p-3 text-center">
+                                    <svg class="w-6 h-6 text-af-purple mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    <div class="font-medium text-af-purple">Mobile</div>
+                                    <div class="text-xs text-gray-500">375×812</div>
+                                </div>
+                            </div>
+                            <!-- Tablet Header -->
+                            <div class="w-44 flex-shrink-0 px-2">
+                                <div class="bg-af-cyan/20 border border-af-cyan/30 rounded-lg p-3 text-center">
+                                    <svg class="w-6 h-6 text-af-cyan mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    <div class="font-medium text-af-cyan">Tablet</div>
+                                    <div class="text-xs text-gray-500">768×1024</div>
+                                </div>
+                            </div>
+                            <!-- Desktop Header -->
+                            <div class="w-52 flex-shrink-0 px-2">
+                                <div class="bg-af-green/20 border border-af-green/30 rounded-lg p-3 text-center">
+                                    <svg class="w-6 h-6 text-af-green mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <div class="font-medium text-af-green">Desktop</div>
+                                    <div class="text-xs text-gray-500">1440×900</div>
+                                </div>
+                            </div>
+                            <!-- Web App Header -->
+                            <div class="w-56 flex-shrink-0 px-2">
+                                <div class="bg-af-orange/20 border border-af-orange/30 rounded-lg p-3 text-center">
+                                    <svg class="w-6 h-6 text-af-orange mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9"/>
+                                    </svg>
+                                    <div class="font-medium text-af-orange">Web App</div>
+                                    <div class="text-xs text-gray-500">1920×1080</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Screen Rows -->
+                        <div class="space-y-4">
+                            <!-- Row 1: Homepage -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Homepage</div>
+                                        <div class="text-xs text-gray-500">Landing page with hero</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-green/20 text-af-green rounded">4/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Mobile Cell -->
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-purple/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col">
+                                            <div class="w-full h-2 bg-af-purple/30 rounded mb-1"></div>
+                                            <div class="w-full h-10 bg-af-purple/20 rounded mb-1"></div>
+                                            <div class="flex-1 bg-af-card rounded"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Tablet Cell -->
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col">
+                                            <div class="w-full h-2 bg-af-cyan/30 rounded mb-1"></div>
+                                            <div class="w-full h-12 bg-af-cyan/20 rounded mb-1"></div>
+                                            <div class="flex-1 grid grid-cols-2 gap-1">
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Desktop Cell -->
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-green/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col">
+                                            <div class="w-full h-2 bg-af-green/30 rounded mb-1"></div>
+                                            <div class="flex gap-1 flex-1">
+                                                <div class="w-1/2 bg-af-green/20 rounded"></div>
+                                                <div class="w-1/2 flex flex-col gap-1">
+                                                    <div class="h-3 bg-white/10 rounded"></div>
+                                                    <div class="h-3 bg-white/10 rounded"></div>
+                                                    <div class="h-4 bg-af-purple/20 rounded"></div>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-1 mt-1">
+                                                <div class="flex-1 h-6 bg-af-card rounded"></div>
+                                                <div class="flex-1 h-6 bg-af-card rounded"></div>
+                                                <div class="flex-1 h-6 bg-af-card rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Web App Cell -->
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-orange/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l flex flex-col gap-1 p-1">
+                                                <div class="w-full h-3 bg-af-orange/30 rounded"></div>
+                                                <div class="w-full h-3 bg-af-card rounded"></div>
+                                                <div class="w-full h-3 bg-af-card rounded"></div>
+                                            </div>
+                                            <div class="flex-1 p-1">
+                                                <div class="h-3 bg-af-card rounded mb-1"></div>
+                                                <div class="grid grid-cols-3 gap-1 h-8">
+                                                    <div class="bg-af-orange/10 rounded"></div>
+                                                    <div class="bg-af-cyan/10 rounded"></div>
+                                                    <div class="bg-af-green/10 rounded"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Experience List -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Experience List</div>
+                                        <div class="text-xs text-gray-500">Browse all experiences</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-green/20 text-af-green rounded">4/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-purple/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-2 bg-af-purple/30 rounded"></div>
+                                            <div class="w-full h-4 bg-af-card rounded"></div>
+                                            <div class="w-full h-10 bg-af-card rounded"></div>
+                                            <div class="w-full h-10 bg-af-card rounded"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-2 bg-af-cyan/30 rounded"></div>
+                                            <div class="w-full h-4 bg-af-card rounded"></div>
+                                            <div class="grid grid-cols-2 gap-1 flex-1">
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-green/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-2 bg-af-green/30 rounded"></div>
+                                            <div class="flex gap-2 flex-1">
+                                                <div class="w-1/4 bg-af-card rounded"></div>
+                                                <div class="flex-1 grid grid-cols-3 gap-1">
+                                                    <div class="bg-af-card rounded"></div>
+                                                    <div class="bg-af-card rounded"></div>
+                                                    <div class="bg-af-card rounded"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-orange/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l"></div>
+                                            <div class="flex-1 p-1 grid grid-cols-3 gap-1">
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                                <div class="bg-af-card rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Experience Detail (with pending) -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Experience Detail</div>
+                                        <div class="text-xs text-gray-500">Single experience view</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-orange/20 text-af-orange rounded">2/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-orange/50 p-2 h-full transition-transform cursor-pointer">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-14 bg-af-purple/20 rounded"></div>
+                                            <div class="w-full h-2 bg-white/10 rounded"></div>
+                                            <div class="w-2/3 h-2 bg-white/10 rounded"></div>
+                                            <div class="w-full h-6 bg-af-green/20 rounded mt-auto"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-orange">⏳</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-16 bg-af-cyan/20 rounded"></div>
+                                            <div class="flex-1 flex gap-1">
+                                                <div class="flex-1 flex flex-col gap-1">
+                                                    <div class="h-2 bg-white/10 rounded"></div>
+                                                    <div class="h-2 bg-white/10 rounded"></div>
+                                                </div>
+                                                <div class="w-12 bg-af-green/20 rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-green/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex gap-1">
+                                            <div class="w-1/2 bg-af-green/20 rounded"></div>
+                                            <div class="w-1/2 flex flex-col gap-1">
+                                                <div class="h-3 bg-white/10 rounded"></div>
+                                                <div class="h-2 bg-white/5 rounded"></div>
+                                                <div class="h-2 bg-white/5 rounded"></div>
+                                                <div class="mt-auto h-6 bg-af-green/30 rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-orange/50 p-2 h-full transition-transform cursor-pointer">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l"></div>
+                                            <div class="flex-1 p-1 flex gap-1">
+                                                <div class="w-1/2 bg-af-orange/10 rounded"></div>
+                                                <div class="w-1/2 flex flex-col gap-1">
+                                                    <div class="h-2 bg-white/10 rounded"></div>
+                                                    <div class="h-2 bg-white/5 rounded"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-orange">⏳</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 4: Booking Form (with pending) -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Booking Form</div>
+                                        <div class="text-xs text-gray-500">Date & guest selection</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-orange/20 text-af-orange rounded">3/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-purple/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1">
+                                            <div class="w-full h-2 bg-af-purple/30 rounded"></div>
+                                            <div class="w-full h-5 bg-af-card rounded"></div>
+                                            <div class="w-full h-5 bg-af-card rounded"></div>
+                                            <div class="w-full h-5 bg-af-card rounded"></div>
+                                            <div class="w-full h-6 bg-af-purple/30 rounded mt-auto"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex gap-1">
+                                            <div class="w-1/2 flex flex-col gap-1">
+                                                <div class="flex-1 bg-af-card rounded"></div>
+                                            </div>
+                                            <div class="w-1/2 flex flex-col gap-1">
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-5 bg-af-cyan/30 rounded mt-auto"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-orange/50 p-2 h-full transition-transform cursor-pointer">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex gap-1">
+                                            <div class="w-1/3 bg-af-card rounded"></div>
+                                            <div class="flex-1 flex flex-col gap-1">
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-5 bg-af-green/30 rounded mt-auto"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-orange">⏳</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-orange/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l"></div>
+                                            <div class="flex-1 flex gap-1 p-1">
+                                                <div class="w-1/3 bg-af-card rounded"></div>
+                                                <div class="flex-1 flex flex-col gap-1">
+                                                    <div class="h-3 bg-af-card rounded"></div>
+                                                    <div class="h-3 bg-af-card rounded"></div>
+                                                    <div class="h-4 bg-af-orange/30 rounded mt-auto"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 5: Payment -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Payment</div>
+                                        <div class="text-xs text-gray-500">Checkout & payment</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-orange/20 text-af-orange rounded">2/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-orange/50 p-2 h-full transition-transform cursor-pointer">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col gap-1 items-center justify-center">
+                                            <div class="w-10 h-10 border-2 border-af-orange/50 rounded-lg flex items-center justify-center">
+                                                <span class="text-af-orange text-xs">💳</span>
+                                            </div>
+                                            <div class="w-2/3 h-4 bg-af-card rounded"></div>
+                                            <div class="w-full h-5 bg-af-green/20 rounded"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-orange">⏳</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex gap-1">
+                                            <div class="w-1/2 flex flex-col gap-1">
+                                                <div class="h-6 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                            </div>
+                                            <div class="w-1/2 flex flex-col gap-1">
+                                                <div class="flex-1 bg-af-card rounded"></div>
+                                                <div class="h-5 bg-af-green/30 rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-green/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex gap-1">
+                                            <div class="w-2/3 flex flex-col gap-1">
+                                                <div class="h-8 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                                <div class="h-4 bg-af-card rounded"></div>
+                                            </div>
+                                            <div class="w-1/3 flex flex-col gap-1">
+                                                <div class="flex-1 bg-af-card rounded"></div>
+                                                <div class="h-5 bg-af-green/30 rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-orange/50 p-2 h-full transition-transform cursor-pointer">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l"></div>
+                                            <div class="flex-1 p-1 flex gap-1">
+                                                <div class="w-2/3 flex flex-col gap-1">
+                                                    <div class="h-6 bg-af-card rounded"></div>
+                                                    <div class="h-4 bg-af-card rounded"></div>
+                                                </div>
+                                                <div class="w-1/3 bg-af-card rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-orange">⏳</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 6: Confirmation -->
+                            <div class="flex items-stretch">
+                                <div class="w-48 flex-shrink-0 pr-4">
+                                    <div class="h-full bg-af-card rounded-lg p-3 border border-af-border flex flex-col justify-center">
+                                        <div class="font-medium mb-1">Confirmation</div>
+                                        <div class="text-xs text-gray-500">Success & receipt</div>
+                                        <div class="flex items-center gap-1 mt-2">
+                                            <span class="text-xs px-1.5 py-0.5 bg-af-green/20 text-af-green rounded">4/4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-36 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-purple/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col items-center justify-center gap-2">
+                                            <div class="w-10 h-10 bg-af-green/20 rounded-full flex items-center justify-center">
+                                                <span class="text-af-green">✓</span>
+                                            </div>
+                                            <div class="w-2/3 h-3 bg-white/10 rounded"></div>
+                                            <div class="w-1/2 h-2 bg-white/5 rounded"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-44 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-cyan/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex flex-col items-center justify-center gap-2">
+                                            <div class="w-12 h-12 bg-af-green/20 rounded-full flex items-center justify-center">
+                                                <span class="text-af-green text-lg">✓</span>
+                                            </div>
+                                            <div class="w-3/4 h-3 bg-white/10 rounded"></div>
+                                            <div class="w-1/2 h-2 bg-white/5 rounded"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-52 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-green/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="w-14 h-14 bg-af-green/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                                                    <span class="text-af-green text-xl">✓</span>
+                                                </div>
+                                                <div class="w-24 h-3 bg-white/10 rounded mx-auto"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-56 flex-shrink-0 px-2">
+                                    <div class="matrix-cell bg-af-card rounded-lg border border-af-border p-2 h-full transition-transform cursor-pointer hover:border-af-orange/50">
+                                        <div class="w-full h-32 bg-af-dark rounded-lg mb-2 p-1.5 flex">
+                                            <div class="w-8 bg-af-darker rounded-l"></div>
+                                            <div class="flex-1 flex items-center justify-center">
+                                                <div class="text-center">
+                                                    <div class="w-10 h-10 bg-af-green/20 rounded-full flex items-center justify-center mx-auto mb-1">
+                                                        <span class="text-af-green">✓</span>
+                                                    </div>
+                                                    <div class="w-16 h-2 bg-white/10 rounded mx-auto"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-af-green">✓</span>
+                                            <span class="text-xs text-gray-500">v1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

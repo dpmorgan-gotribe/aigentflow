@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aigentflow - Main Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vsc-bg': '#1e1e1e',
+                        'vsc-sidebar': '#252526',
+                        'vsc-activitybar': '#333333',
+                        'vsc-editor': '#1e1e1e',
+                        'vsc-titlebar': '#3c3c3c',
+                        'vsc-statusbar': '#007acc',
+                        'vsc-panel': '#1e1e1e',
+                        'vsc-border': '#3c3c3c',
+                        'vsc-active': '#094771',
+                        'vsc-hover': '#2a2d2e',
+                        'vsc-accent': '#007acc',
+                        'vsc-text': '#cccccc',
+                        'vsc-text-dim': '#858585',
+                        'vsc-green': '#4ec9b0',
+                        'vsc-blue': '#569cd6',
+                        'vsc-yellow': '#dcdcaa',
+                        'vsc-orange': '#ce9178',
+                        'vsc-purple': '#c586c0',
+                        'vsc-red': '#f14c4c',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .activity-icon { transition: all 0.1s; }
+        .activity-icon:hover { color: white; }
+        .activity-icon.active { color: white; border-left: 2px solid #007acc; }
+        .tree-item:hover { background: #2a2d2e; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-vsc-bg text-vsc-text overflow-hidden">
+    <!-- Title Bar -->
+    <div class="h-8 bg-vsc-titlebar flex items-center px-4 text-sm border-b border-vsc-border">
+        <div class="flex items-center gap-4 flex-1">
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">File</span>
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">Edit</span>
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">View</span>
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">Agents</span>
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">Run</span>
+            <span class="text-vsc-text-dim hover:text-vsc-text cursor-pointer">Help</span>
+        </div>
+        <div class="flex-1 text-center text-vsc-text-dim">
+            my-saas-app - Aigentflow
+        </div>
+        <div class="flex-1 flex justify-end gap-3 text-vsc-text-dim items-center">
+            <span class="px-2 py-0.5 bg-vsc-green/20 text-vsc-green rounded text-xs">3 Running</span>
+            <span>Active: 3</span>
+            <span>Cost: $1.24</span>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-32px)]">
+        <!-- Activity Bar -->
+        <div class="w-12 bg-vsc-activitybar flex flex-col items-center py-2 border-r border-vsc-border">
+            <div class="activity-icon active w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Explorer">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 0h-9L7 1.5V6H2.5L1 7.5v15.07L2.5 24h12.07L16 22.57V18h4.7l1.3-1.43V4.5L17.5 0zm0 2.12l2.38 2.38H17.5V2.12zm-3 20.38h-12v-15H7v9.07L8.5 18h6v4.5zm6-6h-12v-15H16V6h4.5v10.5z"/></svg>
+            </div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Search">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M15.25 0a8.25 8.25 0 0 0-6.18 13.72L1 22.88l1.12 1.12 8.05-9.12A8.251 8.251 0 1 0 15.25 0zm0 15a6.75 6.75 0 1 1 0-13.5 6.75 6.75 0 0 1 0 13.5z"/></svg>
+            </div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer relative" title="Source Control">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.007 8.222A3.738 3.738 0 0 0 17.5 5.5a3.73 3.73 0 0 0-3.507 2.722 5.015 5.015 0 0 0-.735-.092 4.56 4.56 0 0 0-2.013.456L8.5 5.793V3.207l-6 3 6 3v-2.89l2.556 2.557c-.208.323-.378.672-.503 1.04A3.73 3.73 0 0 0 6.5 12.5a3.738 3.738 0 0 0-3.507 2.722 4.992 4.992 0 0 0 .007 5.556A3.738 3.738 0 0 0 6.5 23.5a3.73 3.73 0 0 0 3.507-2.722 4.99 4.99 0 0 0 2.986-.778l2.457 2.457V20.5l6-3-6-3v2.043l-2.245-2.245a4.968 4.968 0 0 0 .551-1.384A3.73 3.73 0 0 0 17.5 10.5a3.738 3.738 0 0 0 3.507-2.278zM6.5 22a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5zm0-9a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5zm11-4.5a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/></svg>
+                <span class="absolute top-1 right-1 w-4 h-4 bg-vsc-accent rounded-full text-xs flex items-center justify-center text-white">5</span>
+            </div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Agents">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
+            </div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Tasks">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            </div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Skills & MCP">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a3 3 0 0 0-1.5 2.598v6.114a3 3 0 0 0 1.5 2.598l7.5 4.33a3 3 0 0 0 3 0l7.5-4.33a3 3 0 0 0 1.5-2.598V8.443a3 3 0 0 0-1.5-2.598l-7.5-4.33z"/></svg>
+            </div>
+            <div class="flex-1"></div>
+            <div class="activity-icon w-12 h-12 flex items-center justify-center text-vsc-text-dim cursor-pointer" title="Settings">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </div>
+        </div>
+
+        <!-- Left Sidebar -->
+        <div class="w-64 bg-vsc-sidebar flex flex-col border-r border-vsc-border">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">
+                Explorer
+            </div>
+
+            <!-- Git Branches Section -->
+            <div class="border-b border-vsc-border">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim cursor-pointer hover:bg-vsc-hover">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                    <svg class="w-4 h-4 mr-1 text-vsc-purple" fill="currentColor" viewBox="0 0 24 24"><path d="M21.007 8.222A3.738 3.738 0 0 0 17.5 5.5a3.73 3.73 0 0 0-3.507 2.722 5.015 5.015 0 0 0-.735-.092c-.727 0-1.406.2-2.013.456L8.5 5.793V3.207l-6 3 6 3v-2.89l2.556 2.557z"/></svg>
+                    Git Branches
+                </div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer">
+                        <span class="w-2 h-2 rounded-full bg-vsc-green mr-2"></span>
+                        <span>main</span>
+                        <span class="ml-auto text-xs text-vsc-text-dim">base</span>
+                    </div>
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer bg-vsc-active">
+                        <span class="w-2 h-2 rounded-full bg-vsc-accent mr-2"></span>
+                        <span>feature/user-auth</span>
+                        <span class="ml-auto text-xs text-vsc-green">current</span>
+                    </div>
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer">
+                        <span class="w-2 h-2 rounded-full bg-vsc-yellow mr-2"></span>
+                        <span>feature/dashboard</span>
+                        <span class="ml-auto text-xs text-vsc-text-dim">+3</span>
+                    </div>
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer">
+                        <span class="w-2 h-2 rounded-full bg-vsc-orange mr-2"></span>
+                        <span>bugfix/api-error</span>
+                        <span class="ml-auto text-xs text-vsc-text-dim">+1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Worktrees Section -->
+            <div class="border-b border-vsc-border">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim cursor-pointer hover:bg-vsc-hover">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                    <svg class="w-4 h-4 mr-1 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                    Worktrees
+                    <span class="ml-auto px-1.5 py-0.5 bg-vsc-green/20 text-vsc-green rounded text-xs">2</span>
+                </div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer bg-vsc-active">
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>user-auth</span>
+                        <span class="ml-auto px-1.5 py-0.5 bg-vsc-green/20 text-vsc-green rounded text-xs">active</span>
+                    </div>
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>dashboard</span>
+                        <span class="ml-auto px-1.5 py-0.5 bg-vsc-yellow/20 text-vsc-yellow rounded text-xs">paused</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Section -->
+            <div class="flex-1 overflow-auto">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim cursor-pointer hover:bg-vsc-hover">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                    Files
+                </div>
+                <div class="py-1">
+                    <div class="tree-item flex items-center px-4 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        <svg class="w-4 h-4 mr-2 text-vsc-yellow" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>src</span>
+                    </div>
+                    <div class="tree-item flex items-center px-8 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>components</span>
+                    </div>
+                    <div class="tree-item flex items-center px-12 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                        <span>LoginForm.tsx</span>
+                        <span class="ml-auto text-vsc-green text-xs">A</span>
+                    </div>
+                    <div class="tree-item flex items-center px-12 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                        <span>AuthProvider.tsx</span>
+                        <span class="ml-auto text-vsc-yellow text-xs">M</span>
+                    </div>
+                    <div class="tree-item flex items-center px-8 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>api</span>
+                    </div>
+                    <div class="tree-item flex items-center px-8 py-1 text-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+                        <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <span>hooks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="border-t border-vsc-border">
+                <div class="flex items-center px-2 py-1.5 text-xs uppercase tracking-wide text-vsc-text-dim cursor-pointer hover:bg-vsc-hover">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+                    Projects
+                </div>
+                <div class="py-1 pb-2">
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer bg-vsc-active">
+                        <span class="w-2 h-2 rounded-full bg-vsc-green mr-2 animate-pulse-slow"></span>
+                        <span>my-saas-app</span>
+                    </div>
+                    <div class="tree-item flex items-center px-6 py-1 text-sm cursor-pointer text-vsc-text-dim">
+                        <span class="w-2 h-2 rounded-full bg-vsc-text-dim mr-2"></span>
+                        <span>api-service</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Editor Tabs -->
+            <div class="h-9 bg-vsc-titlebar flex items-center border-b border-vsc-border">
+                <div class="tab flex items-center px-3 h-full text-sm border-r border-vsc-border bg-vsc-editor border-t border-t-vsc-accent">
+                    <svg class="w-4 h-4 mr-2 text-vsc-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3v6h6l-6-6zm6 18H5V3h7v7h7v11zM5 1C3.9 1 3 1.9 3 3v18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8l-6-6H5z"/></svg>
+                    <span>Activity</span>
+                </div>
+                <div class="tab flex items-center px-3 h-full text-sm text-vsc-text-dim border-r border-vsc-border hover:bg-vsc-hover cursor-pointer">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    <span>Kanban</span>
+                </div>
+                <div class="tab flex items-center px-3 h-full text-sm text-vsc-text-dim border-r border-vsc-border hover:bg-vsc-hover cursor-pointer">
+                    <svg class="w-4 h-4 mr-2 text-vsc-purple" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    <span>UI Mockups</span>
+                </div>
+                <div class="tab flex items-center px-3 h-full text-sm text-vsc-text-dim border-r border-vsc-border hover:bg-vsc-hover cursor-pointer">
+                    <svg class="w-4 h-4 mr-2 text-vsc-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+                    <span>LoginForm.tsx</span>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div class="flex-1 bg-vsc-editor overflow-auto p-4">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg p-4">
+                        <div class="text-vsc-text-dim text-xs uppercase mb-1">Active Workflows</div>
+                        <div class="text-2xl font-semibold text-vsc-text">3</div>
+                        <div class="text-xs text-vsc-green mt-1">2 in progress</div>
+                    </div>
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg p-4">
+                        <div class="text-vsc-text-dim text-xs uppercase mb-1">Agents Running</div>
+                        <div class="text-2xl font-semibold text-vsc-text">3/14</div>
+                        <div class="text-xs text-vsc-accent mt-1">Frontend, Backend, Tester</div>
+                    </div>
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg p-4">
+                        <div class="text-vsc-text-dim text-xs uppercase mb-1">Tasks Today</div>
+                        <div class="text-2xl font-semibold text-vsc-text">12/18</div>
+                        <div class="text-xs text-vsc-yellow mt-1">6 remaining</div>
+                    </div>
+                    <div class="bg-vsc-sidebar border border-vsc-border rounded-lg p-4">
+                        <div class="text-vsc-text-dim text-xs uppercase mb-1">Session Cost</div>
+                        <div class="text-2xl font-semibold text-vsc-text">$1.24</div>
+                        <div class="text-xs text-vsc-text-dim mt-1">~42K tokens</div>
+                    </div>
+                </div>
+
+                <!-- Live Activity Feed -->
+                <div class="bg-vsc-sidebar border border-vsc-border rounded-lg">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-vsc-border">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-vsc-green animate-pulse"></span>
+                            <span class="text-sm font-medium">Live Activity Feed</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-2 py-1 text-xs bg-vsc-accent/20 text-vsc-accent rounded">All</button>
+                            <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Agents</button>
+                            <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Git</button>
+                            <button class="px-2 py-1 text-xs text-vsc-text-dim hover:bg-vsc-hover rounded">Files</button>
+                        </div>
+                    </div>
+                    <div class="p-4 space-y-3 max-h-96 overflow-auto">
+                        <!-- Activity Item 1 -->
+                        <div class="flex items-start gap-3 p-3 bg-vsc-hover/50 rounded-lg border-l-2 border-vsc-green">
+                            <div class="w-8 h-8 rounded-lg bg-vsc-green/20 flex items-center justify-center flex-shrink-0">
+                                <span class="text-vsc-green text-sm">FE</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium text-sm">Frontend Developer</span>
+                                    <span class="text-xs text-vsc-text-dim">just now</span>
+                                    <span class="px-1.5 py-0.5 text-xs bg-vsc-accent/20 text-vsc-accent rounded">feature/user-auth</span>
+                                </div>
+                                <p class="text-sm text-vsc-text-dim">Created LoginForm.tsx with email/password validation</p>
+                                <div class="flex items-center gap-4 mt-2 text-xs text-vsc-text-dim">
+                                    <span class="text-vsc-green">+142 lines</span>
+                                    <span>Tokens: 3,240</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Item 2 -->
+                        <div class="flex items-start gap-3 p-3 bg-vsc-hover/50 rounded-lg border-l-2 border-vsc-blue">
+                            <div class="w-8 h-8 rounded-lg bg-vsc-blue/20 flex items-center justify-center flex-shrink-0">
+                                <span class="text-vsc-blue text-sm">BE</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium text-sm">Backend Developer</span>
+                                    <span class="text-xs text-vsc-text-dim">2 min ago</span>
+                                </div>
+                                <p class="text-sm text-vsc-text-dim">Implementing /api/auth/login endpoint with JWT tokens</p>
+                                <div class="mt-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-1.5 bg-vsc-border rounded-full overflow-hidden">
+                                            <div class="h-full bg-vsc-blue rounded-full" style="width: 65%"></div>
+                                        </div>
+                                        <span class="text-xs text-vsc-text-dim">65%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Item 3 - Git -->
+                        <div class="flex items-start gap-3 p-3 bg-vsc-hover/50 rounded-lg border-l-2 border-vsc-purple">
+                            <div class="w-8 h-8 rounded-lg bg-vsc-purple/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-vsc-purple" fill="currentColor" viewBox="0 0 24 24"><path d="M2.6 10.59L8.38 4.8l1.69 1.7c-.24.85.15 1.78.93 2.23v5.54c-.6.34-1 .99-1 1.73a2 2 0 0 0 2 2 2 2 0 0 0 2-2c0-.74-.4-1.39-1-1.73V9.41l1.39 1.39c-.24.53-.39 1.15-.39 1.7a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3c-.55 0-1.07.15-1.59.39L13.71 7.8a2 2 0 0 0-.23-2.83c-.79-.78-2.05-.78-2.83 0L8.96 6.66z"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium text-sm">Git Commit</span>
+                                    <span class="text-xs text-vsc-text-dim">5 min ago</span>
+                                </div>
+                                <p class="text-sm text-vsc-text font-mono">"feat(auth): Add login form component"</p>
+                                <div class="flex items-center gap-4 mt-2 text-xs text-vsc-text-dim">
+                                    <span>3 files changed</span>
+                                    <span class="text-vsc-green">+142</span>
+                                    <span class="text-vsc-red">-8</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Item 4 -->
+                        <div class="flex items-start gap-3 p-3 bg-vsc-hover/50 rounded-lg border-l-2 border-vsc-yellow">
+                            <div class="w-8 h-8 rounded-lg bg-vsc-yellow/20 flex items-center justify-center flex-shrink-0">
+                                <span class="text-vsc-yellow text-sm">T</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium text-sm">Tester Agent</span>
+                                    <span class="text-xs text-vsc-text-dim">8 min ago</span>
+                                </div>
+                                <p class="text-sm text-vsc-text-dim">Running test suite for authentication module</p>
+                                <div class="flex items-center gap-3 mt-2 text-xs">
+                                    <span class="text-vsc-green">12 passed</span>
+                                    <span class="text-vsc-red">2 failed</span>
+                                    <span class="text-vsc-text-dim">Coverage: 87%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Item 5 - Orchestrator -->
+                        <div class="flex items-start gap-3 p-3 bg-vsc-hover/50 rounded-lg border-l-2 border-vsc-accent">
+                            <div class="w-8 h-8 rounded-lg bg-vsc-accent/20 flex items-center justify-center flex-shrink-0">
+                                <span class="text-vsc-accent text-sm">O</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-medium text-sm">Orchestrator</span>
+                                    <span class="text-xs text-vsc-text-dim">10 min ago</span>
+                                </div>
+                                <p class="text-sm text-vsc-text-dim">Routing failed tests to Bug Fixer agent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Panel -->
+            <div class="h-40 bg-vsc-panel border-t border-vsc-border flex flex-col">
+                <div class="h-9 flex items-center px-2 border-b border-vsc-border">
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="text-vsc-text px-2 py-1 border-b-2 border-vsc-accent">Agent Logs</span>
+                        <span class="text-vsc-text-dim px-2 py-1 cursor-pointer hover:text-vsc-text">Output</span>
+                        <span class="text-vsc-text-dim px-2 py-1 cursor-pointer hover:text-vsc-text">Problems <span class="ml-1 px-1.5 bg-vsc-red/20 text-vsc-red rounded text-xs">2</span></span>
+                        <span class="text-vsc-text-dim px-2 py-1 cursor-pointer hover:text-vsc-text">Terminal</span>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-auto p-2 font-mono text-xs">
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:32:45</span>
+                        <span class="text-vsc-green">Frontend</span>
+                        <span class="text-vsc-text">Created src/components/LoginForm.tsx</span>
+                    </div>
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:32:48</span>
+                        <span class="text-vsc-green">Frontend</span>
+                        <span class="text-vsc-text">Created src/components/LoginForm.test.tsx</span>
+                    </div>
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:33:02</span>
+                        <span class="text-vsc-blue">Backend</span>
+                        <span class="text-vsc-text">Reading existing auth middleware...</span>
+                    </div>
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:33:15</span>
+                        <span class="text-vsc-blue">Backend</span>
+                        <span class="text-vsc-text">Writing src/api/auth/login.ts</span>
+                    </div>
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:33:28</span>
+                        <span class="text-vsc-yellow">Tester</span>
+                        <span class="text-vsc-text">Running: npm test -- --coverage</span>
+                    </div>
+                    <div class="flex items-start gap-2 py-0.5">
+                        <span class="text-vsc-text-dim">14:33:45</span>
+                        <span class="text-vsc-red">Tester</span>
+                        <span class="text-vsc-text">FAIL: LoginForm.test.tsx - validation error handling</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Orchestrator -->
+        <div class="w-72 bg-vsc-sidebar border-l border-vsc-border flex flex-col">
+            <div class="h-9 flex items-center px-4 text-xs uppercase tracking-wide text-vsc-text-dim border-b border-vsc-border">
+                Orchestrator
+                <span class="ml-auto px-1.5 py-0.5 bg-vsc-green/20 text-vsc-green rounded text-xs normal-case">running</span>
+            </div>
+
+            <!-- Active Agent -->
+            <div class="p-4 border-b border-vsc-border">
+                <div class="text-xs text-vsc-text-dim uppercase mb-2">Active Agents</div>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 p-2 bg-vsc-green/10 border border-vsc-green/30 rounded">
+                        <span class="w-2 h-2 rounded-full bg-vsc-green animate-pulse"></span>
+                        <span class="text-sm text-vsc-green">Frontend Developer</span>
+                    </div>
+                    <div class="flex items-center gap-2 p-2 bg-vsc-blue/10 border border-vsc-blue/30 rounded">
+                        <span class="w-2 h-2 rounded-full bg-vsc-blue animate-pulse"></span>
+                        <span class="text-sm text-vsc-blue">Backend Developer</span>
+                    </div>
+                    <div class="flex items-center gap-2 p-2 bg-vsc-yellow/10 border border-vsc-yellow/30 rounded">
+                        <span class="w-2 h-2 rounded-full bg-vsc-yellow animate-pulse"></span>
+                        <span class="text-sm text-vsc-yellow">Tester Agent</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Git Status -->
+            <div class="p-4 border-b border-vsc-border">
+                <div class="text-xs text-vsc-text-dim uppercase mb-2">Git Status</div>
+                <div class="space-y-1.5 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-vsc-text-dim">Branch</span>
+                        <span class="text-vsc-accent">feature/user-auth</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-vsc-text-dim">Worktree</span>
+                        <span class="text-vsc-text">user-auth</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-vsc-text-dim">Ahead/Behind</span>
+                        <span><span class="text-vsc-green">+5</span> / <span class="text-vsc-text-dim">0</span></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-vsc-text-dim">Modified</span>
+                        <span>4 files</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-vsc-text-dim">Staged</span>
+                        <span>2 files</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="flex-1 overflow-auto p-4">
+                <div class="text-xs text-vsc-text-dim uppercase mb-2">Recent Activity</div>
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="p-2 bg-vsc-hover rounded">
+                        <div class="text-vsc-green">Frontend</div>
+                        <div class="text-vsc-text-dim truncate">Writing LoginForm component...</div>
+                    </div>
+                    <div class="p-2 bg-vsc-hover rounded">
+                        <div class="text-vsc-blue">Backend</div>
+                        <div class="text-vsc-text-dim truncate">Creating auth endpoint...</div>
+                    </div>
+                    <div class="p-2 bg-vsc-hover rounded">
+                        <div class="text-vsc-yellow">Tester</div>
+                        <div class="text-vsc-text-dim truncate">Running test suite...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Command Input -->
+            <div class="p-3 border-t border-vsc-border">
+                <div class="flex items-center gap-2 bg-vsc-bg border border-vsc-border rounded px-3 py-2">
+                    <span class="text-vsc-accent">></span>
+                    <input type="text" placeholder="Ask orchestrator..." class="flex-1 bg-transparent outline-none text-sm text-vsc-text placeholder-vsc-text-dim">
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="flex-1 px-3 py-1.5 bg-vsc-hover text-vsc-text-dim text-xs rounded hover:bg-vsc-border">Pause</button>
+                    <button class="flex-1 px-3 py-1.5 bg-vsc-red/20 text-vsc-red text-xs rounded hover:bg-vsc-red/30">Stop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="h-6 bg-vsc-statusbar flex items-center px-3 text-xs text-white">
+        <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                feature/user-auth
+            </span>
+            <span>+5 ↓0</span>
+            <span class="px-1.5 py-0.5 bg-white/20 rounded">user-auth</span>
+        </div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                3 Agents Active
+            </span>
+            <span>Tasks: 12/18</span>
+            <span>Cost: $1.24</span>
+            <span>Compliance: SOC2</span>
+        </div>
+    </div>
+</body>
+</html>
