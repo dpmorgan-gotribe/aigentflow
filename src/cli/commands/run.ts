@@ -11,11 +11,11 @@ import ora from 'ora';
 import type { WorkflowState, AgentType } from '../../types.js';
 import { initializeDatabase } from '../../persistence/database.js';
 import { getProjectRepository } from '../../persistence/repositories/project-repository.js';
-import { getWorkflowRepository } from '../../persistence/repositories/workflow-repository.js';
 import { getAuditRepository } from '../../persistence/repositories/audit-repository.js';
 import { getWorkflowEngine, resetWorkflowEngine } from '../../core/workflow-engine.js';
 import { getAgentPool, resetAgentPool } from '../../core/agent-pool.js';
 import { analyzeTask } from '../../core/routing.js';
+import { generateMockResponse, getAgentSequence, type MockAgentResponse } from '../../core/mock-responses.js';
 import { logger } from '../../utils/logger.js';
 
 const log = logger.child({ component: 'cli-run' });
@@ -24,6 +24,7 @@ interface RunOptions {
   stopAt?: WorkflowState;
   agent?: AgentType;
   dryRun: boolean;
+  dev: boolean;
   approval: boolean;
 }
 
@@ -34,6 +35,11 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
 
   if (options.dryRun) {
     console.log(chalk.yellow('DRY RUN MODE - No changes will be made'));
+    console.log('');
+  }
+
+  if (options.dev) {
+    console.log(chalk.magenta('DEVELOPMENT MODE - Using mock agent responses'));
     console.log('');
   }
 
@@ -58,7 +64,6 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
   const configFile = path.join(cwd, 'aigentflow.json');
 
   let projectId: string | undefined;
-  let projectName: string;
 
   // Check if we're in a project directory
   if (fs.existsSync(aigentflowDir)) {
@@ -67,22 +72,13 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
     const projectRepo = getProjectRepository();
     const project = projectRepo.getByPath(cwd);
     projectId = project?.id;
-    projectName = project?.name ?? path.basename(cwd);
   } else if (fs.existsSync(configFile)) {
-    // Read config to get project name
-    try {
-      const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
-      projectName = config.name ?? path.basename(cwd);
-    } catch {
-      projectName = path.basename(cwd);
-    }
     console.log(chalk.yellow('Warning: No .aigentflow directory found. Using in-memory database.'));
     initializeDatabase(':memory:');
   } else {
     console.log(chalk.yellow('Warning: Not in an aigentflow project. Using in-memory database.'));
     console.log(chalk.gray('Run `aigentflow init <name>` to create a project.'));
     console.log('');
-    projectName = 'temp-project';
     initializeDatabase(':memory:');
   }
 
@@ -112,6 +108,7 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
       prompt,
       analysis,
       dryRun: options.dryRun,
+      devMode: options.dev,
     });
 
     if (options.dryRun) {
@@ -140,26 +137,22 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
       return;
     }
 
+    // Development mode - execute with mock responses
+    if (options.dev) {
+      spinner.succeed('Analysis complete');
+      console.log('');
+
+      await executeDevMode(prompt, task.id, analysis.taskType, options, spinner);
+      return;
+    }
+
+    // Production mode - simulate (until AI integration)
     spinner.text = 'Starting workflow...';
-
-    // Start the task
     await engine.startTask(task.id);
-
     spinner.text = `State: ${engine.getTask(task.id)?.state}`;
 
-    // Get agent pool stats
     const pool = getAgentPool();
     const poolStats = pool.getStats();
-
-    // Listen for events
-    const events: string[] = [];
-    engine.on((event) => {
-      events.push(`[${new Date().toISOString()}] ${event.type}: ${event.taskId}`);
-      spinner.text = `${event.type} - ${engine.getTask(task.id)?.state ?? 'unknown'}`;
-    });
-
-    // In MVP, we don't have actual agent implementations yet
-    // So we'll simulate the workflow progression
 
     spinner.text = 'Orchestrating agents...';
     await sleep(1000);
@@ -180,7 +173,6 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
       await sleep(500);
     }
 
-    // Check for approval requirements
     if (options.approval) {
       const currentTask = engine.getTask(task.id);
       if (currentTask?.context.approvalsPending.length ?? 0 > 0) {
@@ -213,12 +205,171 @@ export async function runCommand(prompt: string, options: RunOptions): Promise<v
     console.log('');
     console.log(chalk.gray('Run `aigentflow status` to see details.'));
     console.log(chalk.gray('Note: Full agent execution will be available in future increments.'));
+    console.log(chalk.gray('Use --dev flag for development mode with mock responses.'));
   } catch (error) {
     spinner.fail('Workflow failed');
     console.error(chalk.red(error instanceof Error ? error.message : String(error)));
     log.error('Workflow execution failed', error instanceof Error ? error : new Error(String(error)));
     process.exit(1);
   }
+}
+
+/**
+ * Execute in development mode with mock responses
+ */
+async function executeDevMode(
+  prompt: string,
+  taskId: string,
+  taskType: string,
+  options: RunOptions,
+  spinner: ReturnType<typeof ora>
+): Promise<void> {
+  const agentSequence = options.agent
+    ? [options.agent]
+    : getAgentSequence(taskType as Parameters<typeof getAgentSequence>[0]);
+
+  console.log(chalk.cyan('Agent Execution Pipeline:'));
+  console.log(chalk.gray(`  Sequence: ${agentSequence.join(' → ')}`));
+  console.log('');
+
+  const results: MockAgentResponse[] = [];
+  const artifacts: { agent: string; name: string; type: string; size: number }[] = [];
+
+  for (let i = 0; i < agentSequence.length; i++) {
+    const agent = agentSequence[i];
+    const stepNum = i + 1;
+
+    spinner.start(`[${stepNum}/${agentSequence.length}] Running ${agent}...`);
+    await sleep(800); // Simulate processing time
+
+    try {
+      const response = generateMockResponse(agent, prompt, taskType as Parameters<typeof generateMockResponse>[2]);
+      results.push(response);
+
+      if (response.artifacts) {
+        for (const artifact of response.artifacts) {
+          artifacts.push({
+            agent,
+            name: artifact.name,
+            type: artifact.type,
+            size: artifact.content.length,
+          });
+        }
+      }
+
+      spinner.succeed(`[${stepNum}/${agentSequence.length}] ${chalk.green(agent)}: ${response.message}`);
+
+      // Show key output details
+      if (response.output) {
+        const outputPreview = getOutputPreview(agent, response.output);
+        if (outputPreview) {
+          console.log(chalk.gray(`      └─ ${outputPreview}`));
+        }
+      }
+
+    } catch (error) {
+      spinner.fail(`[${stepNum}/${agentSequence.length}] ${chalk.red(agent)}: Failed`);
+      log.error(`Agent ${agent} failed`, error instanceof Error ? error : new Error(String(error)));
+    }
+
+    await sleep(200);
+  }
+
+  // Summary
+  console.log('');
+  console.log(chalk.cyan('═'.repeat(50)));
+  console.log(chalk.green.bold('✓ Workflow Complete'));
+  console.log(chalk.cyan('═'.repeat(50)));
+  console.log('');
+
+  console.log(chalk.cyan('Summary:'));
+  console.log(`  Task ID: ${chalk.white(taskId)}`);
+  console.log(`  Agents Run: ${chalk.white(String(results.length))}`);
+  console.log(`  All Succeeded: ${results.every((r) => r.success) ? chalk.green('Yes') : chalk.red('No')}`);
+  console.log('');
+
+  if (artifacts.length > 0) {
+    console.log(chalk.cyan('Generated Artifacts:'));
+    for (const artifact of artifacts) {
+      const icon = getArtifactIcon(artifact.type);
+      console.log(`  ${icon} ${chalk.white(artifact.name)} ${chalk.gray(`(${formatSize(artifact.size)})`)}`);
+    }
+    console.log('');
+  }
+
+  // Show sample artifact content
+  const htmlArtifact = results.find((r) => r.artifacts?.some((a) => a.type === 'html'))?.artifacts?.find((a) => a.type === 'html');
+  if (htmlArtifact) {
+    console.log(chalk.cyan('Sample Output (HTML Mockup):'));
+    console.log(chalk.gray('─'.repeat(50)));
+    // Show first 30 lines
+    const lines = htmlArtifact.content.split('\n').slice(0, 30);
+    for (const line of lines) {
+      console.log(chalk.gray(line));
+    }
+    if (htmlArtifact.content.split('\n').length > 30) {
+      console.log(chalk.gray(`... (${htmlArtifact.content.split('\n').length - 30} more lines)`));
+    }
+    console.log(chalk.gray('─'.repeat(50)));
+    console.log('');
+  }
+
+  // Final notes
+  console.log(chalk.gray('Development mode complete. In production, these would be real AI responses.'));
+  console.log(chalk.gray('Use `aigentflow status` to see task details.'));
+}
+
+/**
+ * Get a preview string for agent output
+ */
+function getOutputPreview(agent: string, output: Record<string, unknown>): string {
+  switch (agent) {
+    case 'orchestrator':
+      return `Routing: ${(output as Record<string, Record<string, unknown>>).routing?.primary ?? 'unknown'}`;
+    case 'project-manager':
+      return `Tasks: ${((output as Record<string, Record<string, unknown>>).workBreakdown as Record<string, unknown[]>)?.tasks?.length ?? 0} items`;
+    case 'architect':
+      return `Pattern: ${(output as Record<string, Record<string, unknown>>).architecture?.pattern ?? 'unknown'}`;
+    case 'ui-designer':
+      return `Pages: ${((output as Record<string, Record<string, unknown>>).design as Record<string, unknown[]>)?.pages?.length ?? 0}, Responsive: ${(output as Record<string, Record<string, unknown>>).design?.responsive ?? false}`;
+    case 'frontend-developer':
+      return `Files: ${((output as Record<string, Record<string, unknown>>).implementation as Record<string, string[]>)?.files?.length ?? 0}`;
+    case 'tester':
+      return `Tests: ${(output as Record<string, Record<string, unknown>>).testResults?.passed ?? 0}/${(output as Record<string, Record<string, unknown>>).testResults?.total ?? 0} passed`;
+    case 'reviewer':
+      return `Score: ${(output as Record<string, Record<string, unknown>>).review?.score ?? 'N/A'}/10`;
+    default:
+      return '';
+  }
+}
+
+/**
+ * Get icon for artifact type
+ */
+function getArtifactIcon(type: string): string {
+  switch (type) {
+    case 'html':
+      return '📄';
+    case 'css':
+      return '🎨';
+    case 'file':
+      return '📝';
+    case 'json':
+      return '📋';
+    case 'markdown':
+      return '📖';
+    default:
+      return '📎';
+  }
+}
+
+/**
+ * Format file size
+ */
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 function sleep(ms: number): Promise<void> {

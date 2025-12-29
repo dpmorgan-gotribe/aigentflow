@@ -39,6 +39,7 @@ program
   .option('-s, --stop-at <state>', 'Stop execution at specified state')
   .option('-a, --agent <agent>', 'Run specific agent only')
   .option('-d, --dry-run', 'Show what would be executed without running')
+  .option('--dev', 'Development mode with mock agent responses')
   .option('--no-approval', 'Skip approval gates (use with caution)')
   .action(async (prompt: string, options) => {
     const { runCommand } = await import('./commands/run.js');
