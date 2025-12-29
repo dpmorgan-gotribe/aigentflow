@@ -12,7 +12,11 @@
       "Bash(node:*)",
       "Bash(cat:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Complete MVP implementation of Aigentflow multi-agent orchestrator\n\nThis commit implements the full MVP \\(Phase 1\\) of the Aigentflow system,\na self-evolving multi-agent orchestrator for software development.\n\n## Core Features\n\n- **CLI Framework**: 8 commands \\(init, run, status, config, approve, abort, history, lessons\\)\n- **State Machine**: 18-state workflow engine with hub-and-spoke model\n- **Persistence**: SQLite with WAL mode, repositories for all entities\n- **Hook System**: Extensible hooks with secret detection, security scan, audit logging\n- **Agent Framework**: Base classes, registry, context manager\n- **Core Agents**: Orchestrator, Project Manager, Architect, Analyst\n\n## Technical Highlights\n\n- TypeScript with ESM modules\n- 304 passing tests \\(unit, integration, CLI smoke tests\\)\n- Feature flags for phased rollout\n- 18-layer prompt architecture\n- Rule-based routing \\(85%\\) with AI assistance \\(15%\\)\n\n## Project Structure\n\n- src/cli/ - CLI commands\n- src/core/ - State machine, workflow engine, routing\n- src/agents/ - Agent implementations\n- src/persistence/ - SQLite layer with repositories\n- src/hooks/ - Hook system with built-ins\n- src/prompts/ - Prompt templates and builder\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

@@ -159,6 +159,20 @@ export const MVP_FLAGS: Record<string, FeatureFlag> = {
   // Features - DISABLED in MVP
   // =========================================================================
 
+  'features.skills': {
+    key: 'features.skills',
+    enabled: false,
+    description: 'Skills framework for modular capability packs',
+    phase: 'v1',
+  },
+
+  'features.mcp': {
+    key: 'features.mcp',
+    enabled: false,
+    description: 'MCP server framework for tool routing',
+    phase: 'v1',
+  },
+
   'features.gitWorktrees': {
     key: 'features.gitWorktrees',
     enabled: false,
