@@ -193,6 +193,7 @@ export function getAgentTemplate(agentType: string): AgentTemplate | undefined {
     'project-manager': PROJECT_MANAGER_TEMPLATE,
     architect: ARCHITECT_TEMPLATE,
     analyst: ANALYST_TEMPLATE,
+    // Phase 2 agents will be added as they are implemented
   };
   return templates[agentType];
 }

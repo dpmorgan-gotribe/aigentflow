@@ -12,3 +12,8 @@ export {
   getAgentTemplate,
   AGENT_TEMPLATES,
 } from './base.js';
+
+export {
+  PROJECT_ANALYZER_TEMPLATE,
+  type ProjectAnalyzerOutput,
+} from './project-analyzer.js';

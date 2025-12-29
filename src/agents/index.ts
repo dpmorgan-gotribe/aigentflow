@@ -13,11 +13,14 @@ export { AgentRegistry, getAgentRegistry, resetAgentRegistry } from './registry.
 // Context manager
 export { ContextManager, getContextManager, resetContextManager } from './context-manager.js';
 
-// Core agents
+// Core agents (MVP)
 export { OrchestratorAgent, createOrchestratorAgent } from './orchestrator.js';
 export { ProjectManagerAgent, createProjectManagerAgent } from './project-manager.js';
 export { ArchitectAgent, createArchitectAgent } from './architect.js';
 export { AnalystAgent, createAnalystAgent } from './analyst.js';
+
+// Phase 2 agents (v1.0)
+export { ProjectAnalyzerAgent, createProjectAnalyzerAgent } from './project-analyzer.js';
 
 // Types
 export type {
