@@ -23,6 +23,7 @@ export { AnalystAgent, createAnalystAgent } from './analyst.js';
 export { ProjectAnalyzerAgent, createProjectAnalyzerAgent } from './project-analyzer.js';
 export { ComplianceAgent, createComplianceAgent, type ComplianceAgentOutput } from './compliance-agent.js';
 export { UIDesignerAgent, createUIDesignerAgent, type UIDesignerConfig } from './ui-designer.js';
+export { GitAgent, createGitAgent } from './git-agent.js';
 
 // Types
 export type {
